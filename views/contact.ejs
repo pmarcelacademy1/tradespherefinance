@@ -1,0 +1,42 @@
+
+
+<%- include('partials/_header'); -%>
+
+
+
+<%- include('partials/_sidebar'); -%>
+
+
+
+
+<section class="fade-appear-done fade-enter-done"><div class="container"><br><br>
+  <section class="bg app-px-1 app-py-3">
+    <form method="POST" action="#"><div class="row app-py-0">
+      <div class="col l6 s12">
+        <div class="input-field">
+          <input type="text" id="name" placeholder="Your Name*" required=""></div></div>
+          <div class="col l6 s12"><div class="input-field">
+            <input type="email" name="email" id="email" placeholder="Email Address*" required="">
+          
+          </div></div></div>
+            <div class="row app-py-0"><div class="col l6 s12 "><div class="input-field">
+              <input type="number" name="phone" id="phone" placeholder="Phone Number*" required="">
+            
+            </div></div>
+              <div class="col l6 s12"><div class="input-field">
+                <input type="text" name="subject" id="subject" placeholder="Subject" required="" class="validate">
+              
+              </div></div></div>
+                <div class="row app-py-0"><div class="col l12 s12"><div class="input-field">
+                  <textarea placeholder="Your Message Here..." type="text" name="message" id="body" class="materialize-textarea"></textarea>
+                
+                </div></div>
+                  <div><button type="submit" class="btn-style btn-filled">SEND MESSAGE</button></div>
+                  <br><p><b>Note:</b> We promise that we don't do spam &amp; your mail address is confidential.</p></div>
+                </form>
+              </section><br></div></section>
+<!--include footer navbar snipet-->
+
+
+
+<%- include('partials/_footer'); -%>

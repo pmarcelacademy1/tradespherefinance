@@ -1,0 +1,198 @@
+<%- include('partials/header') %>
+
+<div class="container text-white" style="min-height: 100vh; background-color: #212529;">
+  <!-- Flash Messages -->
+  <% if (messages.error) { %>
+    <div class="row">
+      <div class="col s12">
+        <div class="card red darken-1">
+          <div class="card-content white-text">
+            <span class="card-title">Error</span>
+            <p><%= messages.error %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Mining Details</h1>
+    <div class="text-end">
+      <small><b>Mining ID:</b> <%= mining._id %></small><br>
+      <small><b>Last Updated:</b> <%= new Date(mining.updatedAt).toLocaleString() %></small>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-dark text-white">
+      <li class="breadcrumb-item"><a href="/adminRoute" class="text-white">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="/all-minings" class="text-white">All Minings</a></li>
+      <li class="breadcrumb-item active text-white" aria-current="page">
+        <%= mining.owner ? `${mining.owner.first_name} ${mining.owner.last_name}` : 'Unknown User' %>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Mining Details -->
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Mining Information</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Coin:</b></div>
+              <div class="col-8"><%= mining.coin || 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Amount ($):</b></div>
+              <div class="col-8"><%= mining.amount ? mining.amount.toFixed(2) : 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Profit:</b></div>
+              <div class="col-8"><%= mining.profit ? `${mining.profit.toFixed(6)} ${mining.coin}` : 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Daily Profit:</b></div>
+              <div class="col-8"><%= mining.dailyProfit ? `${mining.dailyProfit.toFixed(6)} ${mining.coin}` : 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Duration (days):</b></div>
+              <div class="col-8"><%= mining.duration || 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Hash Rate:</b></div>
+              <div class="col-8"><%= mining.hashRate || 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Status:</b></div>
+              <div class="col-8">
+                <span class="<%= mining.status === 'pending' ? 'yellow-text' : mining.status === 'approved' ? 'green-text' : 'red-text' %>">
+                  <%= mining.status ? mining.status.charAt(0).toUpperCase() + mining.status.slice(1) : 'N/A' %>
+                </span>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Owner:</b></div>
+              <div class="col-8">
+                <%= mining.owner ? `${mining.owner.first_name} ${mining.owner.last_name} (${mining.owner.email})` : 'Unknown User' %>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Additional Details</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Payment Proof:</b></div>
+              <div class="col-8">
+                <% if (mining.image) { %>
+                  <a href="/IMG_UPLOADS/<%= mining.image %>" target="_blank">View</a>
+                <% } else { %>
+                  <span>No proof uploaded</span>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Start Date:</b></div>
+              <div class="col-8"><%= mining.startDate ? new Date(mining.startDate).toLocaleString() : 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>End Date:</b></div>
+              <div class="col-8"><%= mining.endDate ? new Date(mining.endDate).toLocaleString() : 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Created At:</b></div>
+              <div class="col-8"><%= new Date(mining.createdAt).toLocaleString() %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Updated At:</b></div>
+              <div class="col-8"><%= new Date(mining.updatedAt).toLocaleString() %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="row">
+    <div class="col s12">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-content">
+          <div class="d-flex flex-row gap-2">
+            <a href="/editMining/<%= mining._id %>" class="btn" style="background-color:#ffc107;">
+              <i class="material-icons left">edit</i>Edit Mining
+            </a>
+            <form action="/deleteMining/<%= mining._id %>?_method=DELETE" method="POST">
+              <button type="submit" class="btn red">
+                <i class="material-icons left">delete</i>Delete Mining
+              </button>
+            </form>
+            <a href="/all-minings" class="btn grey">
+              <i class="material-icons left">arrow_back</i>Back to Minings
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .d-flex {
+    display: flex;
+  }
+  .flex-row {
+    flex-direction: row;
+  }
+  .gap-2 {
+    gap: 10px;
+  }
+  .breadcrumb {
+    background-color: #212529 !important;
+  }
+  .yellow-text {
+    color: #ffeb3b !important;
+    font-weight: bold;
+  }
+  .green-text {
+    color: #4caf50 !important;
+    font-weight: bold;
+  }
+  .red-text {
+    color: #f44336 !important;
+    font-weight: bold;
+  }
+</style>
+
+<%- include('partials/footer') %>

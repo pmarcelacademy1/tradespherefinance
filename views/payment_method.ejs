@@ -1,0 +1,69 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <section class="center"><br><b><h2>Fund Account</h2></b><br><br>
+      <div class="row">
+        <p>You are about to deposit <b><span style="color:green;" id="depositAmount">$0</span></b> to your <span id="accountType">Account</span></p>
+        <p>Please select your payment method</p><br><br>
+        <div class="col l4 s12 offset-l4">
+          <ul class="collection">
+            <li class="collection-item app-py-2 app-px-2 payment-method" data-method="BITCOIN"><b>BITCOIN</b></li>
+            <li class="collection-item app-py-2 app-px-2 payment-method" data-method="ETHEREUM"><b>ETHEREUM</b></li>
+            <li class="collection-item app-py-2 app-px-2 payment-method" data-method="XRP"><b>XRP</b></li>
+            <li class="collection-item app-py-2 app-px-2 payment-method" data-method="USDt"><b>USDt</b></li>
+            <li class="collection-item app-py-2 app-px-2 payment-method" data-method="RUNE"><b>RUNE</b></li>
+            <li class="collection-item app-py-2 app-px-2 payment-method" data-method="XLM"><b>XLM</b></li>
+            <li class="collection-item app-py-2 app-px-2 payment-method" data-method="DOGE"><b>DOGE</b></li>
+            <li class="collection-item app-py-2 app-px-2 payment-method" data-method="Solana"><b>Solana</b></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Modal Structure -->
+      <div id="modal1" class="modal">
+        <div class="modal-content">
+          <h4>Fund Your Account via Western Union Transfer</h4>
+          <p>If you wish to fund your account via Western Union transfer, please contact our support team via Email or Live Chat to receive the appropriate payment details.</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+      </div>
+      <div id="modal2" class="modal">
+        <div class="modal-content">
+          <h4>Fund Your Account via Wire Transfer</h4>
+          <p>If you wish to fund your account via Bank deposit, please contact our support team via Email or Live Chat to receive the appropriate payment details.</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+  // Load deposit data from local storage
+  const depositData = JSON.parse(localStorage.getItem('depositData')) || {};
+  document.getElementById('depositAmount').textContent = `$${parseFloat(depositData.amount || 0).toFixed(2)}`;
+  document.getElementById('accountType').textContent = depositData.accountType || 'Account';
+
+  // Handle payment method selection
+  document.querySelectorAll('.payment-method').forEach(item => {
+    item.addEventListener('click', () => {
+      const paymentMethod = item.dataset.method;
+      const userId = '<%= user._id %>'; // Assuming user ID is passed to the template
+
+      // Update local storage with payment method
+      localStorage.setItem('depositData', JSON.stringify({
+        ...depositData,
+        paymentMethod: paymentMethod
+      }));
+
+      // Redirect to get address page
+      window.location.href = `/get_address/${userId}`;
+    });
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>

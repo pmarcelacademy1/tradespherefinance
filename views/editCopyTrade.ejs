@@ -1,0 +1,315 @@
+<%- include('partials/header') %>
+
+<div class="container my-5 pb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Header Section -->
+      <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-dark">
+          Editing Copy Trade: <%= copyTrade.owner ? `${copyTrade.owner.first_name} ${copyTrade.owner.last_name}` : 'Unknown User' %>
+        </h1>
+        <div class="text-end">
+          <small><b>Copy Trade ID:</b> <%= copyTrade._id %></small>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/adminRoute">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="/all-copytrades">All Copy Trades</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= copyTrade.owner ? `${copyTrade.owner.first_name} ${copyTrade.owner.last_name}` : 'Unknown User' %>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Edit Form -->
+      <form action="/editCopyTrade/<%= copyTrade._id %>?_method=PUT" method="POST" class="bg-light p-4 rounded shadow mb-5" enctype="application/x-www-form-urlencoded">
+        <!-- Error Display -->
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger" role="alert">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Copy Trade Information -->
+        <h4 class="mb-3">Copy Trade Information</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="traderName" class="form-label">Trader Name</label>
+            <input type="text" class="form-control" id="traderName" name="traderName" value="<%= copyTrade.traderName %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="profitShare" class="form-label">Profit Share (%)</label>
+            <input type="number" step="0.01" class="form-control" id="profitShare" name="profitShare" value="<%= copyTrade.profitShare.toFixed(2) %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="winRate" class="form-label">Win Rate (%)</label>
+            <input type="number" step="0.01" class="form-control" id="winRate" name="winRate" value="<%= copyTrade.winRate.toFixed(2) %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="<%= copyTrade.amount.toFixed(2) %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="accountType" class="form-label">Account Type</label>
+            <input type="text" class="form-control" id="accountType" name="accountType" value="<%= copyTrade.accountType %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="duration" class="form-label">Duration (days)</label>
+            <input type="number" min="1" class="form-control" id="duration" name="duration" value="<%= copyTrade.duration %>" required>
+            <div class="invalid-feedback">
+              Duration must be at least 1 day.
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status" required>
+              <option value="" <%= !copyTrade.status ? 'selected' : '' %>>Select Status</option>
+              <option value="active" <%= copyTrade.status === 'active' ? 'selected' : '' %>>Active</option>
+              <option value="completed" <%= copyTrade.status === 'completed' ? 'selected' : '' %>>Completed</option>
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid status.
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="owner" class="form-label">Owner</label>
+            <input type="text" class="form-control" id="owner" name="owner" value="<%= copyTrade.owner ? `${copyTrade.owner.first_name} ${copyTrade.owner.last_name} (${copyTrade.owner.email})` : 'Unknown User' %>" readonly required>
+          </div>
+        </div>
+
+        <!-- Timestamps & Metrics -->
+        <h4 class="mb-3">Timestamps & Metrics</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="datetime-local" class="form-control" id="startDate" name="startDate" value="<%= new Date(copyTrade.startDate).toISOString().slice(0, 16) %>" required>
+            <div class="invalid-feedback">
+              Please provide a valid start date.
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="datetime-local" class="form-control" id="endDate" name="endDate" value="<%= copyTrade.endDate ? new Date(copyTrade.endDate).toISOString().slice(0, 16) : '' %>" required>
+            <div class="invalid-feedback">
+              Please provide a valid end date.
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="currentProfit" class="form-label">Current Profit</label>
+            <input type="number" step="0.01" class="form-control" id="currentProfit" name="currentProfit" value="<%= copyTrade.currentProfit.toFixed(2) %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="createdAt" class="form-label">Created At</label>
+            <input type="text" class="form-control" id="createdAt" name="createdAt" value="<%= new Date(copyTrade.createdAt).toLocaleString() %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="updatedAt" class="form-label">Updated At</label>
+            <input type="text" class="form-control" id="updatedAt" name="updatedAt" value="<%= new Date(copyTrade.updatedAt).toLocaleString() %>" readonly required>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-primary">Update Copy Trade</button>
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" id="deleteButton" data-bs-target="#deleteModal">Delete Copy Trade</button>
+        </div>
+      </form>
+
+      <!-- Delete Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Confirm Copy Trade Deletion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>This will remove the copy trade record with ID <b><%= copyTrade._id %></b>.<br>Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form action="/deleteCopyTrade/<%= copyTrade._id %>?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-primary">Yes, Remove Copy Trade</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Form validation
+  (function () {
+    'use strict';
+    const form = document.querySelector('form');
+    const statusSelect = document.getElementById('status');
+    const durationInput = document.getElementById('duration');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    // Log initial values for debugging
+    console.log('Initial status:', statusSelect.value);
+    console.log('Initial duration:', durationInput.value);
+    console.log('Initial startDate:', startDateInput.value);
+    console.log('Initial endDate:', endDateInput.value);
+
+    // Clear validation on input change
+    statusSelect.addEventListener('change', () => {
+      if (['active', 'completed'].includes(statusSelect.value)) {
+        statusSelect.classList.remove('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'none';
+      } else {
+        statusSelect.classList.add('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'block';
+      }
+    });
+
+    durationInput.addEventListener('change', () => {
+      const value = parseInt(durationInput.value);
+      if (isNaN(value) || value < 1) {
+        durationInput.classList.add('is-invalid');
+        durationInput.nextElementSibling.style.display = 'block';
+      } else {
+        durationInput.classList.remove('is-invalid');
+        durationInput.nextElementSibling.style.display = 'none';
+      }
+    });
+
+    startDateInput.addEventListener('change', () => {
+      if (startDateInput.value) {
+        startDateInput.classList.remove('is-invalid');
+        startDateInput.nextElementSibling.style.display = 'none';
+      } else {
+        startDateInput.classList.add('is-invalid');
+        startDateInput.nextElementSibling.style.display = 'block';
+      }
+    });
+
+    endDateInput.addEventListener('change', () => {
+      if (endDateInput.value) {
+        endDateInput.classList.remove('is-invalid');
+        endDateInput.nextElementSibling.style.display = 'none';
+      } else {
+        endDateInput.classList.add('is-invalid');
+        endDateInput.nextElementSibling.style.display = 'block';
+      }
+    });
+
+    // Validate on submit
+    form.addEventListener('submit', (e) => {
+      let valid = true;
+
+      // Validate status
+      if (!['active', 'completed'].includes(statusSelect.value)) {
+        valid = false;
+        statusSelect.classList.add('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'block';
+      } else {
+        statusSelect.classList.remove('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'none';
+      }
+
+      // Validate duration
+      const durationValue = parseInt(durationInput.value);
+      if (isNaN(durationValue) || durationValue < 1) {
+        valid = false;
+        durationInput.classList.add('is-invalid');
+        durationInput.nextElementSibling.style.display = 'block';
+      } else {
+        durationInput.classList.remove('is-invalid');
+        durationInput.nextElementSibling.style.display = 'none';
+      }
+
+      // Validate startDate
+      if (!startDateInput.value) {
+        valid = false;
+        startDateInput.classList.add('is-invalid');
+        startDateInput.nextElementSibling.style.display = 'block';
+      } else {
+        startDateInput.classList.remove('is-invalid');
+        startDateInput.nextElementSibling.style.display = 'none';
+      }
+
+      // Validate endDate
+      if (!endDateInput.value) {
+        valid = false;
+        endDateInput.classList.add('is-invalid');
+        endDateInput.nextElementSibling.style.display = 'block';
+      } else {
+        endDateInput.classList.remove('is-invalid');
+        endDateInput.nextElementSibling.style.display = 'none';
+      }
+
+      // Prevent submission if invalid
+      if (!valid) {
+        e.preventDefault();
+        alert('Please correct the errors in the form before submitting.');
+      }
+    });
+
+    // Initialize validation state
+    const validStatuses = ['active', 'completed'];
+    if (!validStatuses.includes(statusSelect.value)) {
+      statusSelect.classList.add('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'block';
+    }
+    if (isNaN(parseInt(durationInput.value)) || parseInt(durationInput.value) < 1) {
+      durationInput.classList.add('is-invalid');
+      durationInput.nextElementSibling.style.display = 'block';
+    }
+    if (!startDateInput.value) {
+      startDateInput.classList.add('is-invalid');
+      startDateInput.nextElementSibling.style.display = 'block';
+    }
+    if (!endDateInput.value) {
+      endDateInput.classList.add('is-invalid');
+      endDateInput.nextElementSibling.style.display = 'block';
+    }
+  })();
+</script>
+
+<style>
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  .is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  }
+  .invalid-feedback {
+    display: none;
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+  }
+  .form-control, .form-select {
+    display: block !important;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+  form.mb-5 {
+    margin-bottom: 5rem !important;
+  }
+</style>
+
+<%- include('partials/footer') %>

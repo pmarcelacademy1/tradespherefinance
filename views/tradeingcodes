@@ -1,0 +1,672 @@
+// models/Livetrade.js
+const mongoose = require('mongoose');
+
+const livetradeSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    required: true,
+    enum: ['Market'],
+    default: 'Market'
+  },
+  currencypair: {
+    type: String,
+    required: true
+  },
+  lotsize: {
+    type: Number,
+    required: true,
+    min: [0, 'Lot size cannot be negative']
+  },
+  entryPrice: {
+    type: Number,
+    required: true,
+    min: [0, 'Entry price cannot be negative']
+  },
+  stopLoss: {
+    type: Number,
+    required: true
+  },
+  takeProfit: {
+    type: Number,
+    required: true
+  },
+  action: {
+    type: String,
+    required: true,
+    enum: ['UP', 'DOWN']
+  },
+  leverage: {
+    type: Number,
+    required: true,
+    min: [1, 'Leverage must be at least 1'],
+    max: [50, 'Leverage cannot exceed 50']
+  },
+  status: {
+    type: String,
+    required: true,
+    enum: ['open', 'closed'],
+    default: 'open'
+  },
+  profitLoss: {
+    type: Number,
+    default: 0
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    required: true
+  }
+}, { timestamps: true });
+
+const Livetrading = mongoose.model('livetrade', livetradeSchema);
+module.exports = Livetrading;
+
+
+
+
+
+
+
+
+
+// ***********************************************live schema**********************************************//
+
+
+
+
+
+module.exports.createTrade = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { currencypair, amount, time, leverage, action, type } = req.body;
+      console.log('Request body:', req.body);
+  
+      if (!currencypair || !amount || !time || !leverage || !action || !type) {
+        return res.status(400).json({ error: 'All fields are required' });
+      }
+  
+      const parsedAmount = parseFloat(amount);
+      const parsedTime = parseInt(time);
+      const parsedLeverage = parseInt(leverage);
+  
+      if (isNaN(parsedAmount) || parsedAmount <= 0) {
+        return res.status(400).json({ error: 'Invalid amount' });
+      }
+      if (isNaN(parsedTime) || parsedTime < 1 || parsedTime > 59) {
+        return res.status(400).json({ error: 'Time must be between 1 and 59 minutes' });
+      }
+      if (isNaN(parsedLeverage) || parsedLeverage < 1 || parsedLeverage > 50) {
+        return res.status(400).json({ error: 'Leverage must be between 1 and 50' });
+      }
+      if (!['UP', 'DOWN'].includes(action)) {
+        return res.status(400).json({ error: 'Invalid action' });
+      }
+      if (type !== 'Market') {
+        return res.status(400).json({ error: 'Invalid trade type' });
+      }
+  
+      const normalizedCurrencypair = currencypair.replace('/', '').toUpperCase();
+      if (!coinMap[normalizedCurrencypair]) {
+        return res.status(400).json({ error: `Unsupported currency pair: ${currencypair}` });
+      }
+  
+      const user = await User.findById(userId).select('accountTypes livetrades');
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      if (user.isSuspended) {
+        return res.status(403).json({ error: 'Your account is suspended.' });
+      }
+    
+  
+      const tradingAccount = user.accountTypes.find(acc => acc.name === 'Trading Account');
+      if (!tradingAccount || tradingAccount.minDeposit === 0) {
+        return res.status(400).json({ error: 'Insufficient balance. Please deposit funds.' });
+      }
+  
+      const balance = tradingAccount.minDeposit;
+      if (parsedAmount > balance) {
+        return res.status(400).json({ error: `Amount ($${parsedAmount}) exceeds available balance ($${balance}).` });
+      }
+  
+      const coinId = coinMap[normalizedCurrencypair];
+      let entryPrice;
+      let isFallback = false;
+      try {
+        entryPrice = await fetchPrice(coinId);
+      } catch (apiError) {
+        console.error('CoinGecko API error:', apiError.message);
+        entryPrice = 100;
+        isFallback = true;
+      }
+  
+      const stopLoss = (entryPrice * (action === 'UP' ? 0.9 : 1.1)).toFixed(2);
+      const takeProfit = (entryPrice * (action === 'UP' ? 1.1 : 0.9)).toFixed(2);
+  
+      const livetrade = new Livetrading({
+        type,
+        currencypair: normalizedCurrencypair,
+        lotsize: (parsedAmount / entryPrice).toFixed(6),
+        entryPrice: entryPrice.toFixed(2),
+        stopLoss,
+        takeProfit,
+        action,
+        leverage: parsedLeverage,
+        status: 'open',
+        owner: userId
+      });
+  
+      await livetrade.save();
+  
+      tradingAccount.minDeposit -= parsedAmount;
+      user.livetrades = user.livetrades || [];
+      user.livetrades.push(livetrade._id);
+      await user.save();
+  
+      const response = { success: true, redirect: `/tradeHistory/${userId}` };
+      if (isFallback) {
+        response.warning = 'Price data unavailable, used fallback price.';
+      }
+      res.json(response);
+    } catch (error) {
+      console.error('Create trade error:', error);
+      res.status(500).json({ error: `Server error: ${error.message}` });
+    }
+  };
+  
+  module.exports.tradeHistoryPage = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const user = await User.findById(userId).select('currency balance');
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+      if (user.isSuspended) {
+        return res.status(403).send('Your account is suspended.');
+      }
+   
+    
+      const trades = await Livetrading.find({ owner: userId }).sort({ createdAt: -1 });
+  
+      // Fetch current prices
+      const coinIds = [...new Set(trades.map(trade => coinMap[trade.currencypair]))].filter(Boolean);
+      let prices = {};
+      if (coinIds.length > 0) {
+        try {
+          const priceResponse = await axios.get(
+            'https://api.coingecko.com/api/v3/simple/price',
+            {
+              params: {
+                ids: coinIds.join(','),
+                vs_currencies: 'usd'
+              }
+            }
+          );
+          prices = coinIds.reduce((acc, id) => {
+            const pair = Object.keys(coinMap).find(key => coinMap[key] === id);
+            if (pair) {
+              acc[pair] = priceResponse.data[id]?.usd || 0;
+            }
+            return acc;
+          }, {});
+        } catch (error) {
+          console.error('Price fetch error:', error.message);
+        }
+      }
+  
+      // Pass coinMap to the template
+      res.render('tradeHistory', { user, trades, prices, coinMap });
+    } catch (error) {
+      console.error('Trade history error:', error);
+      res.status(500).send('Server error');
+    }
+  };
+  
+  module.exports.closeTrade = async (req, res) => {
+    try {
+      const { tradeId, userId } = req.params;
+      const trade = await Livetrading.findOne({ _id: tradeId, owner: userId });
+      if (!trade) {
+        return res.status(404).json({ error: 'Trade not found' });
+      }
+      if (trade.status === 'closed') {
+        return res.status(400).json({ error: 'Trade is already closed' });
+      }
+  
+      const user = await User.findById(userId).select('accountTypes');
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      const tradingAccount = user.accountTypes.find(acc => acc.name === 'Trading Account');
+      if (!tradingAccount) {
+        return res.status(400).json({ error: 'Trading Account not found' });
+      }
+  
+      // Fetch current price
+      let currentPrice = 0;
+      const coinId = coinMap[trade.currencypair];
+      if (coinId) {
+        try {
+          currentPrice = await fetchPrice(coinId);
+        } catch (error) {
+          console.error('Price fetch error:', error.message);
+          currentPrice = parseFloat(trade.entryPrice);
+        }
+      }
+  
+      // Calculate profit/loss with leverage
+      const entryPrice = parseFloat(trade.entryPrice);
+      const lotsize = parseFloat(trade.lotsize);
+      const leverage = trade.leverage;
+      const priceDiff = trade.action === 'UP' ? (currentPrice - entryPrice) : (entryPrice - currentPrice);
+      const profitLoss = (priceDiff * lotsize * leverage).toFixed(2);
+  
+      // Update trade
+      trade.status = 'closed';
+      trade.profitLoss = parseFloat(profitLoss);
+      await trade.save();
+  
+      // Update Trading Account balance
+      tradingAccount.minDeposit = parseFloat(tradingAccount.minDeposit) + parseFloat(profitLoss);
+      await user.save();
+  
+      res.json({ success: true, message: 'Trade closed successfully' });
+    } catch (error) {
+      console.error('Close trade error:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  };
+
+//   trade frontend
+
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <section style="margin-top: 3px;">
+      <div class="row">
+        <div class="col l4 s12">
+          <div class="row">
+            <div class="col s6 l4">
+              <div style="margin-right: 1px; margin-top: 4px; margin-bottom: 0px; display: inline-block;">
+                <select id="options" class="browser-default">
+                  <option value="Crypto">Crypto (43)</option>
+                  <option value="Currencies">Currencies (32)</option>
+                  <option value="Stocks">Stocks (35)</option>
+                  <option value="Indices">Indices (7)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col s6 l4">
+              <div style="margin-right: 1px; margin-top: 4px; margin-bottom: 0px; display: inline-block;">
+                <select id="choices" class="browser-default">
+                  <option value="" disabled selected>Choose a pair</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <br>
+          <ul class="collection">
+            <% if (trades && trades.length > 0) { %>
+              <% trades.forEach(trade => { %>
+                <li class="collection-item app-py-2">
+                  <strong><%= trade.currencypair %></strong><br>
+                  <span><%= trade.action %> | <%= trade.lotsize.toFixed(4) %> lots | $<%= trade.entryPrice.toFixed(2) %></span>
+                </li>
+              <% }) %>
+            <% } else { %>
+              <li class="collection-item app-py-2">
+                <p id="no-data" style="text-align: center;">
+                  <span class="app-font-normal">NO OPEN TRADES</span>
+                </p>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+        <div class="col l6 s12 m10">
+          <div class="tradingview-widget-container" style="width: 100%; height: 500px;">
+            <iframe id="tradingview-widget" scrolling="no" allowtransparency="true" frameborder="0" src="" style="box-sizing: border-box; display: block; height: calc(100% - 32px); width: 100%;"></iframe>
+            <div class="tradingview-widget-copyright"></div>
+          </div>
+        </div>
+        <div class="col l2 s12 m2 center">
+          <section>
+            <form id="tradeForm">
+              <div class="row">
+                <div class="col l12 s4">
+                  <div>
+                    <label class="active">Amount ($)</label>
+                    <input type="number" name="amount" min="1" step="0.01" required>
+                  </div>
+                </div>
+                <div class="col l12 s4">
+                  <div>
+                    <label class="active">Time (Minutes)</label>
+                    <input type="number" name="time" min="1" max="59" value="10" required>
+                  </div>
+                </div>
+                <div class="col l12 s4">
+                  <div>
+                    <label class="active">Leverage (50 MAX)</label>
+                    <input type="number" name="leverage" min="1" max="50" value="1" required>
+                  </div>
+                </div>
+                <input type="hidden" name="type" id="type" value="Market">
+                <input type="hidden" name="currencypair" id="currencypair">
+                <input type="hidden" name="action" id="action">
+              </div>
+              <div id="formError" style="color: red; display: none;"></div>
+              <div class="row app-py-1">
+                <div class="col s6 l12">
+                  <button type="submit" class="green btn btn-full btn-large" data-action="UP">Buy (UP)</button>
+                </div>
+                <div class="col s6 l12">
+                  <button type="submit" class="red btn btn-full btn-large" data-action="DOWN">Sell (DOWN)</button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<style>
+  .tradingview-widget-copyright {
+    font-size: 13px !important;
+    line-height: 32px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+    color: #B2B5BE !important;
+  }
+  .tradingview-widget-copyright .blue-text {
+    color: #2962FF !important;
+  }
+  .tradingview-widget-copyright a {
+    text-decoration: none !important;
+    color: #B2B5BE !important;
+  }
+  .tradingview-widget-copyright a:visited {
+    color: #B2B5BE !important;
+  }
+  .tradingview-widget-copyright a:hover .blue-text {
+    color: #1E53E5 !important;
+  }
+  .tradingview-widget-copyright a:active .blue-text {
+    color: #1848CC !important;
+  }
+  .tradingview-widget-copyright a:visited .blue-text {
+    color: #2962FF !important;
+  }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  // Lookup for currency pairs
+  const lookup = {
+    'Crypto': ['SOLUSD', 'BTCUSD', 'ETHUSD', 'ADAUSD', 'LTCUSD', 'APEUSD', 'XRPUSD', 'BCHUSD', 'MATICUSD', 'BNBUSD', 'ATOMUSD', 'MKRUSD', 'ZECUSD', 'AXSUSD', 'RUNEUSD', 'KSMUSD', 'FTMUSD', 'CAKEUSD', 'UNIUSD', 'ICPUSD', 'NEARUSD', 'DOTUSD', 'MANAUSD', 'XLMUSD', 'GRTUSD', 'NEOUSD', 'LINKUSD', 'TRXUSD', 'EGLDUSD', 'EOSUSD', 'HBARUSD', 'DASHUSD', 'ALGOUSD', 'XTZUSD', 'FILUSD', 'BSVUSD', 'XMRUSD', 'COMPUSD', 'WBTCUSD', 'AAVEUSD', 'FTTUSD', 'KLAYUSD', 'THETAUSD'],
+    'Currencies': ['AUD/CAD', 'AUD/CHF', 'AUD/JPY', 'AUD/NZD', 'AUD/USD', 'CAD/CHF', 'CAD/JPY', 'EUR/AUD', 'EUR/CAD', 'EUR/CHF', 'EUR/GBP', 'EUR/JPY', 'EUR/NZD', 'EUR/USD', 'GBP/AUD', 'GBP/CAD', 'GBP/CHF', 'GBP/JPY', 'GBP/NZD', 'GBP/USD', 'NZD/CAD', 'NZD/CHF', 'NZD/JPY', 'NZD/USD', 'USD/CAD', 'USD/CHF', 'USD/JPY', 'USD/MXN', 'USD/SGD', 'USD/TRY', 'USD/THB', 'USD/ZAR'],
+    'Stocks': ['Apple', 'Abbott Labs', 'Adobe', 'Analog Devices', 'AETHLON MEDICAL', 'AIG', 'AMC Holdings', 'AMD', 'American Tower', 'Amazon', 'ALPHA PRO TECH', 'aIBM', 'Intel', 'Coca Cola', 'Microsoft', 'Motorola', 'Netflix', 'Nvidia', 'PayPal Inc', 'Rocket Lab USA INC', 'SSR Mining', 'Square', 'Teva', 'Toyota Motor', 'T-Mobile US', 'TripAdvisor', 'Tesla', 'TSMC', 'Twitter', 'United Health Group', 'Visa', 'Verizon', 'Wells Fargo', 'Walmart', 'Exxon Mobil'],
+    'Indices': ['S&P 500 Index', 'US Wall St 30', 'Germany 30', 'US Nas 100', 'UK100GBP', 'US ROSS 2000', 'Australia 200']
+  };
+
+  $(document).ready(function () {
+    // Initialize Materialize select
+    $('select').formSelect();
+
+    // Update choices dropdown
+    $('#options').on('change', function () {
+      const selectValue = $(this).val();
+      $('#choices').empty().append('<option value="" disabled selected>Choose a pair</option>');
+      for (let pair of lookup[selectValue]) {
+        $('#choices').append(`<option value="${pair}">${pair}</option>`);
+      }
+      $('#choices').formSelect();
+      updateTradingView('');
+      // Disable form for non-Crypto options
+      if (selectValue !== 'Crypto') {
+        $('#tradeForm input, #tradeForm button').prop('disabled', true);
+        $('#formError').text('Trading is only available for Crypto pairs.').show();
+      } else {
+        $('#tradeForm input, #tradeForm button').prop('disabled', false);
+        $('#formError').hide();
+      }
+    });
+
+    // Update TradingView widget and currencypair
+    $('#choices').on('change', function () {
+      const pair = $(this).val();
+      $('#currencypair').val(pair);
+      updateTradingView(pair);
+    });
+
+    // Update TradingView widget URL
+    function updateTradingView(pair) {
+      const widget = $('#tradingview-widget');
+      if (!pair) {
+        widget.attr('src', '');
+        return;
+      }
+      const type = $('#options').val();
+      let symbol;
+      if (type === 'Crypto') {
+        symbol = `BINANCE:${pair}`;
+      } else if (type === 'Currencies') {
+        symbol = pair.replace('/', '');
+      } else {
+        symbol = pair.replace(/\s+/g, '');
+      }
+      const url = `https://www.tradingview-widget.com/embed-widget/symbol-overview/?locale=en#%7B%22symbols%22%3A%5B%5B%22${encodeURIComponent(symbol)}%7C1D%22%5D%5D%2C%22chartOnly%22%3Afalse%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22colorTheme%22%3A%22light%22%2C%22showVolume%22%3Afalse%2C%22showMA%22%3Afalse%2C%22hideDateRanges%22%3Afalse%2C%22hideMarketStatus%22%3Afalse%2C%22hideSymbolLogo%22%3Afalse%2C%22scalePosition%22%3A%22right%22%2C%22scaleMode%22%3A%22Normal%22%2C%22fontFamily%22%3A%22-apple-system%2C%20BlinkMacSystemFont%2C%20Trebuchet%20MS%2C%20Roboto%2C%20Ubuntu%2C%20sans-serif%22%2C%22fontSize%22%3A%2210%22%2C%22noTimeScale%22%3Afalse%2C%22valuesTracking%22%3A%221%22%2C%22changeMode%22%3A%22price-and-percent%22%2C%22chartType%22%3A%22area%22%2C%22maLineColor%22%3A%22%232962FF%22%2C%22maLineWidth%22%3A1%2C%22maLength%22%3A9%2C%22lineWidth%22%3A2%2C%22lineType%22%3A0%2C%22dateRanges%22%3A%5B%221d%7C1%22%2C%221m%7C30%22%2C%223m%7C60%22%2C%2212m%7C1D%22%2C%2260m%7C1W%22%2C%22all%7C1M%22%5D%2C%22utm_source%22%3A%22tradespherefinance.com%22%2C%22utm_medium%22%3A%22widget_new%22%2C%22utm_campaign%22%3A%22symbol-overview%22%2C%22page-uri%22%3A%22tradespherefinance.com%2Ftrade%2F%22%7D`;
+      widget.attr('src', url);
+    }
+
+    // Handle form submission
+    $('#tradeForm').on('submit', function (e) {
+      e.preventDefault();
+      $('#formError').hide();
+
+      const button = $(e.originalEvent.submitter);
+      $('#action').val(button.data('action'));
+
+      const formData = {
+        type: 'Market', // Hardcode to 'Market'
+        currencypair: $('#currencypair').val(),
+        amount: parseFloat($('input[name="amount"]').val()),
+        time: parseInt($('input[name="time"]').val()),
+        leverage: parseInt($('input[name="leverage"]').val()),
+        action: $('#action').val()
+      };
+
+      // Client-side validation
+      if (!formData.currencypair) {
+        $('#formError').text('Please select a trading pair.').show();
+        return;
+      }
+      if (isNaN(formData.amount) || formData.amount <= 0) {
+        $('#formError').text('Amount must be greater than 0.').show();
+        return;
+      }
+      if (isNaN(formData.time) || formData.time < 1 || formData.time > 59) {
+        $('#formError').text('Time must be between 1 and 59 minutes.').show();
+        return;
+      }
+      if (isNaN(formData.leverage) || formData.leverage < 1 || formData.leverage > 50) {
+        $('#formError').text('Leverage must be between 1 and 50.').show();
+        return;
+      }
+      if (!['UP', 'DOWN'].includes(formData.action)) {
+        $('#formError').text('Please select Buy (UP) or Sell (DOWN).').show();
+        return;
+      }
+
+      $.ajax({
+        url: `/trade/<%= user._id %>`,
+        type: 'POST',
+        data: formData,
+        success: function (response) {
+          if (response.success) {
+            M.toast({ html: 'Trade placed successfully!', classes: 'green' });
+            setTimeout(() => {
+              window.location.href = response.redirect;
+            }, 1000);
+          }
+        },
+        error: function (xhr) {
+          let errorMsg = 'Failed to place trade.';
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMsg = xhr.responseJSON.error;
+          }
+          $('#formError').text(errorMsg).show();
+        }
+      });
+    });
+  });
+</script>
+
+<%- include('partials/dynaFooter')%></section>
+
+{/* trade History page */}
+
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <section style="margin-top: 3px;">
+      <div class="row">
+        <div class="col l12 s12">
+          <h4>Trade History</h4>
+          <% if (trades.length === 0) { %>
+            <p>No trades found.</p>
+          <% } else { %>
+            <ul class="collection">
+              <% trades.forEach(trade => { %>
+                <li class="collection-item">
+                  <div class="row">
+                    <div class="col l3 s6">
+                      <strong><%= trade.currencypair %></strong><br>
+                      Type: <%= trade.type %><br>
+                      Action: <%= trade.action %>
+                    </div>
+                    <div class="col l3 s6">
+                      Entry Price: $<span class="entry-price"><%= trade.entryPrice %></span><br>
+                      Stop Loss: $<%= trade.stopLoss %><br>
+                      Take Profit: $<%= trade.takeProfit %>
+                    </div>
+                    <div class="col l3 s6">
+                      Lot Size: <%= trade.lotsize %><br>
+                      Leverage: <%= trade.leverage %>x<br>
+                      Status: <span class="status"><%= trade.status %></span><br>
+                      Profit/Loss: <span class="profit-loss" data-trade-id="<%= trade._id %>">$0.00</span>
+                    </div>
+                    <div class="col l3 s6">
+                      <% if (trade.status === 'open') { %>
+                        <button class="btn red close-trade" data-trade-id="<%= trade._id %>">Close Trade</button>
+                      <% } else { %>
+                        <p>Trade Closed (P/L: $<span class="final-profit-loss" data-trade-id="<%= trade._id %>"><%= trade.profitLoss.toFixed(2) %></span>)</p>
+                      <% } %>
+                    </div>
+                  </div>
+                </li>
+              <% }) %>
+            </ul>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="fixed-footer bgc" style="z-index: 1;">
+        <ul class="tabs">
+          <li class="tab col s4"><a href="/dashboard"><span class="material-icons notranslate">home</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Home</span></a></li>
+          <li class="tab col s4"><a href="/mining/<%= user._id %>"><span class="material-icons notranslate">token</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Mining</span></a></li>
+          <li class="tab col s4"><a href="/trade/<%= user._id %>"><span class="material-icons notranslate">browse_gallery</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Trade</span></a></li>
+          <li class="tab col s4"><a href="/account/<%= user._id %>"><span class="material-icons notranslate">wallet</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Profile</span></a></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Initialize tabs
+    $('.tabs').tabs();
+
+    // CoinGecko coin IDs
+    const coinMap = <%- JSON.stringify(coinMap) %>;
+
+    // Update profit/loss for open trades
+    function updateProfitLoss() {
+      $('.profit-loss').each(function () {
+        const tradeId = $(this).data('trade-id');
+        const status = $(`.status`, $(this).closest('.collection-item')).text();
+        if (status !== 'open') {
+          // Display saved profit/loss for closed trades
+          const finalProfitLoss = $(`.final-profit-loss[data-trade-id="${tradeId}"]`).text();
+          $(this).text(`$${finalProfitLoss}`);
+          $(this).css('color', parseFloat(finalProfitLoss) >= 0 ? 'green' : 'red');
+          return;
+        }
+
+        const trade = <%- JSON.stringify(trades) %>.find(t => t._id === tradeId);
+        const coinId = coinMap[trade.currencypair];
+        if (!coinId) return;
+
+        $.ajax({
+          url: `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`,
+          success: (data) => {
+            const currentPrice = data[coinId]?.usd || 0;
+            const entryPrice = parseFloat($(`.entry-price`, $(this).closest('.collection-item')).text());
+            const lotsize = parseFloat(trade.lotsize);
+            const leverage = trade.leverage;
+            const priceDiff = trade.action === 'UP' ? (currentPrice - entryPrice) : (entryPrice - currentPrice);
+            const profitLoss = (priceDiff * lotsize * leverage).toFixed(2);
+
+            $(this).text(`$${profitLoss}`);
+            $(this).css('color', profitLoss >= 0 ? 'green' : 'red');
+          },
+          error: () => {
+            console.error(`Failed to fetch price for ${coinId}`);
+          }
+        });
+      });
+    }
+
+    // Initial update and set interval
+    updateProfitLoss();
+    setInterval(updateProfitLoss, 5000);
+
+    // Handle close trade
+    $('.close-trade').on('click', function () {
+      const tradeId = $(this).data('trade-id');
+      $.ajax({
+        url: `/trade/close/<%= user._id %>/${tradeId}`,
+        type: 'POST',
+        success: function (response) {
+          if (response.success) {
+            M.toast({ html: response.message, classes: 'green' });
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          }
+        },
+        error: function (xhr) {
+          let errorMsg = 'An error occurred';
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMsg = xhr.responseJSON.error;
+          }
+          M.toast({ html: errorMsg, classes: 'red' });
+        }
+      });
+    });
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>
+  

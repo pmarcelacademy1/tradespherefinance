@@ -1,0 +1,153 @@
+<%- include('partials/dynaHeader')%>
+
+      
+
+<main style="min-height: 100vh;">
+  <div class="row">
+    <div class="col l6 offset-l3 s12">
+      <div class="card-panel">
+        <h3 style="color: #286090; text-align: center;">Verify Your Identity</h3>
+        <p style="text-align: justify;">Please verify your identity by uploading a valid government-issued identification card. Ensure your browser has camera access if using an iOS device.</p>
+        <center>
+          <% if (messages.error) { %>
+            <div style="background-color: #ffebee; color: #c62828; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+              <%= messages.error %>
+            </div>
+          <% } %>
+          <% if (messages.success) { %>
+            <div style="background-color: #e8f5e9; color: #2e7d32; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+              <%= messages.success %>
+            </div>
+          <% } %>
+
+          <form action="/verify/<%= user._id %>" method="POST" enctype="multipart/form-data">
+            <!-- Hidden email field -->
+            <input type="hidden" name="email" value="<%= user.email %>">
+
+            <!-- Username -->
+            <div class="input-field">
+              <input type="text" name="username" maxlength="100" value="<%= user.first_name + ' ' + user.last_name %>" required id="username">
+              <label class="active" for="username">Username</label>
+            </div>
+
+            <!-- Full Name -->
+            <div class="input-field">
+              <input type="text" name="fullname" maxlength="100" value="<%= user.first_name + ' ' + user.last_name %>" required id="fullname">
+              <label class="active" for="fullname">Full Name</label>
+            </div>
+
+            <!-- City -->
+            <div class="input-field">
+              <input type="text" name="city" maxlength="100" value="<%= user.city %>" required id="city">
+              <label class="active" for="city">City</label>
+            </div>
+
+            <!-- Gender -->
+            <div class="input-field">
+              <select name="gender" required id="gender" class="browser-default">
+                <option value="" disabled <%= !user.gender ? 'selected' : '' %>>Select Gender</option>
+                <option value="Male" <%= user.gender === 'Male' ? 'selected' : '' %>>Male</option>
+                <option value="Female" <%= user.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                <option value="Other" <%= user.gender === 'Other' ? 'selected' : '' %>>Other</option>
+              </select>
+              <label class="active">Gender</label>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="input-field">
+              <input type="date" name="dateofBirth" required id="dateofBirth">
+              <label class="active" for="dateofBirth">Date of Birth</label>
+            </div>
+
+            <!-- Marital Status -->
+            <div class="input-field">
+              <select name="marital" required id="marital" class="browser-default">
+                <option value="" disabled selected>Select Marital Status</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
+              </select>
+              <label class="active">Marital Status</label>
+            </div>
+
+            <!-- Age -->
+            <div class="input-field">
+              <input type="number" name="age" min="18" max="150" required id="age">
+              <label class="active" for="age">Age</label>
+            </div>
+
+            <!-- Address -->
+            <div class="input-field">
+              <input type="text" name="address" maxlength="300" value="<%= user.address %>" required id="address">
+              <label class="active" for="address">Address</label>
+            </div>
+
+            <!-- Front Image -->
+            <div class="file-field input-field">
+              <div style="background-color: #286090; color: white; padding: 8px 16px; border-radius: 4px;">
+                <span>Select Front Image</span>
+                <input type="file" name="images" accept=".jpg,.png,.jpeg" required id="front">
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+
+            <!-- Back Image -->
+            <div class="file-field input-field">
+              <div style="background-color: #286090; color: white; padding: 8px 16px; border-radius: 4px;">
+                <span>Select Back Image</span>
+                <input type="file" name="backImage" accept=".jpg,.png,.jpeg" id="back">
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+              <button type="submit" style="background-color: #286090; color: white; padding: 10px 72px; border: none; border-radius: 30px; font-size: 16px; font-weight: bold; margin-top: 15px;">
+                Upload
+              </button>
+            </div>
+          </form>
+        </center>
+      </div>
+    </div>
+  </div>
+</main>
+
+ <!--include footer navbar snipet-->
+    
+
+
+
+
+<section>
+      
+  <div class="fixed-footer bgc" style="z-index: 1;">
+      <ul class="tabs"><li class="tab col s4">
+          <a class="active" href="/dashboard">
+              <span class="material-icons notranslate">home</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Home</span></a></li>
+              <li class="tab col s4"><a class="" href="/mining"><span class="material-icons notranslate">token</span>
+                  <span class="hide-on-med-and-down" style="padding-left: 6px;">Mining</span></a></li>
+ 
+                      <li class="tab col s4">
+                          <a class="" href="/trade"><span class="material-icons notranslate">browse_gallery</span>
+                              <span class="hide-on-med-and-down" style="padding-left: 6px;">Trade</span></a></li>
+                              <li class="tab col s4">
+                                  <!--<a class="" href="/trades/"><span class="material-icons notranslate">history_edu</span>
+                                      <span class="hide-on-med-and-down" style="padding-left: 6px;">Trades</span></a></li>-->
+                                      </li><li class="tab col s4"><a class="" href="/account/<%=user._id%>"><span class="material-icons notranslate">wallet</span>
+                                          <span class="hide-on-med-and-down" style="padding-left: 6px;">Profile</span></a></li>
+                                      
+                                      </ul></div></section>
+
+                                      
+
+</div></main></div>
+  
+
+
+<%- include('partials/dynaFooter')%>

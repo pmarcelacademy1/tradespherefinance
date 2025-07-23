@@ -1,0 +1,61 @@
+<%- include('partials/dynaHeader')%>
+
+      
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <center>
+      <!-- Profile Picture Logic -->
+      <% if (user.image) { %>
+        <img src="/IMG_UPLOADS/<%= user.image %>" class="circle" height="150px" alt="Profile Picture">
+      <% } else { %>
+        <img src="/static/account/assets/images/user.png" class="circle" height="150px" alt="Default Profile Picture">
+      <% } %>
+
+      <h2><%= user.first_name %> <%= user.last_name %></h2>
+      <p>VERIFICATIONS</p>
+    </center>
+    <div class="row">
+      <div class="col l6 s12 offset-l3">
+        <ul class="collection">
+          <!-- Email Verification (unchanged) -->
+          <a class="collection-item bg">
+            <li>
+              <div style="padding: 1rem 1rem 0.8rem; background: rgb(181, 72, 198); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">mail</span>
+              </div>
+              Email Verification 
+              <span style="color: silver; font-size: 12px;">Verified</span>
+            </li>
+          </a>
+
+          <!-- Identity Verification Logic -->
+          <% if (user.kycVerified) { %>
+            <li class="collection-item bg">
+              <div style="padding: 1rem 1rem 0.8rem; background: rgb(225, 85, 93); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">person</span>
+              </div>
+              Identity Verification 
+              <span style="color: silver; font-size: 12px;">Verification Submitted</span>
+            </li>
+          <% } else { %>
+            <a class="collection-item bg" href="/verification/<%= user._id %>">
+              <li>
+                <div style="padding: 1rem 1rem 0.8rem; background: rgb(225, 85, 93); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                  <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">person</span>
+                </div>
+                Identity Verification 
+                <span style="color: silver; font-size: 12px;"><%= user.verifiedStatus %></span>
+              </li>
+            </a>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+    <!--include footer navbar snipet-->
+    
+
+
+
+    <%- include('partials/dynaFooter')%>

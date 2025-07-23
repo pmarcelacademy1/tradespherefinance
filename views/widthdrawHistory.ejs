@@ -1,0 +1,385 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="container" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <br>
+    <center>
+      <a href="/withdraw/<%= user._id %>" class="btn btn-large" style="background-color:#286090;">NEW WITHDRAWAL</a>
+    </center>
+
+    <!-- Display Flash Messages -->
+    <% if (messages.error && messages.error.length > 0) { %>
+      <div style="background-color: #ffebee; color: #c62828; padding: 15px; margin: 20px; border-radius: 4px;">
+        <%= messages.error %>
+      </div>
+    <% } %>
+    <% if (messages.success && messages.success.length > 0) { %>
+      <div style="background-color: #e8f5e9; color: #2e7d32; padding: 15px; margin: 20px; border-radius: 4px;">
+        <%= messages.success %>
+      </div>
+    <% } %>
+
+    <!-- Filter Form -->
+    <div class="container">
+      <div class="card-panel">
+        <form id="filterForm" method="GET" action="/withdrawHistory/<%= user._id %>">
+          <div class="row">
+            <div class="input-field col l4 s12">
+              <select name="status" class="browser-default">
+                <option value="All" <%= filters.status === 'All' ? 'selected' : '' %>>All Statuses</option>
+                <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                <option value="approved" <%= filters.status === 'approved' ? 'selected' : '' %>>Approved</option>
+                <option value="rejected" <%= filters.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+              </select>
+              <label>Status</label>
+            </div>
+            <div class="input-field col l4 s12">
+              <input type="date" name="startDate" value="<%= filters.startDate %>" id="startDate">
+              <label for="startDate">Start Date</label>
+            </div>
+            <div class="input-field col l4 s12">
+              <input type="date" name="endDate" value="<%= filters.endDate %>" id="endDate">
+              <label for="endDate">End Date</label>
+            </div>
+          </div>
+          <div class="center">
+            <button type="submit" class="btn" style="background-color:#286090;">Apply Filters</button>
+            <a href="/withdrawHistory/<%= user._id %>" class="btn grey">Clear Filters</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bank Withdraw History -->
+    <center>
+      <p class="center">Bank Withdraw History</p>
+    </center>
+    <div class="container">
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>From</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Withdrew To</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (withdrawals.Bank && withdrawals.Bank.length > 0) { %>
+                <% withdrawals.Bank.forEach(withdrawal => { %>
+                  <tr>
+                    <td><%= withdrawal.narration.split('|')[0].trim() %></td>
+                    <td><%= withdrawal.from %></td>
+                    <td><%= new Date(withdrawal.createdAt).toLocaleDateString() %></td>
+                    <td>$<%= withdrawal.amount.toFixed(2) %></td>
+                    <td><%= withdrawal.narration.split('|')[1]?.trim() || 'N/A' %></td>
+                    <td><%= withdrawal.status %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6"><center>No Bank withdrawals found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <!-- Bank Pagination -->
+      <% if (pagination.Bank.totalPages > 1) { %>
+        <div class="center">
+          <ul class="pagination">
+            <li class="<%= pagination.Bank.page === 1 ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.Bank.page > 1 ? `/withdrawHistory/${user._id}?bankPage=${pagination.Bank.page - 1}&limit=${pagination.Bank.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_left</i>
+              </a>
+            </li>
+            <% for (let i = 1; i <= pagination.Bank.totalPages; i++) { %>
+              <li class="<%= pagination.Bank.page === i ? 'active' : 'waves-effect' %>">
+                <a href="/withdrawHistory/<%= user._id %>?bankPage=<%= i %>&limit=<%= pagination.Bank.limit %>&status=<%= filters.status %>&startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>">
+                  <%= i %>
+                </a>
+              </li>
+            <% } %>
+            <li class="<%= pagination.Bank.page === pagination.Bank.totalPages ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.Bank.page < pagination.Bank.totalPages ? `/withdrawHistory/${user._id}?bankPage=${pagination.Bank.page + 1}&limit=${pagination.Bank.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_right</i>
+              </a>
+            </li>
+          </ul>
+          <p>Showing <%= (pagination.Bank.page - 1) * pagination.Bank.limit + 1 %> to <%= Math.min(pagination.Bank.page * pagination.Bank.limit, pagination.Bank.totalWithdrawals) %> of <%= pagination.Bank.totalWithdrawals %> Bank withdrawals</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Crypto Withdraw History -->
+    <center>
+      <p class="center">Crypto Withdraw History</p>
+    </center>
+    <div class="container">
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>From</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Withdrew To</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (withdrawals.Cryptocurrency && withdrawals.Cryptocurrency.length > 0) { %>
+                <% withdrawals.Cryptocurrency.forEach(withdrawal => { %>
+                  <tr>
+                    <td><%= withdrawal.narration.split('|')[0].trim() %></td>
+                    <td><%= withdrawal.from %></td>
+                    <td><%= new Date(withdrawal.createdAt).toLocaleDateString() %></td>
+                    <td>$<%= withdrawal.amount.toFixed(2) %></td>
+                    <td><%= withdrawal.narration.split('|')[2]?.trim() || 'N/A' %></td>
+                    <td><%= withdrawal.status %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6"><center>No Crypto withdrawals found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <!-- Crypto Pagination -->
+      <% if (pagination.Cryptocurrency.totalPages > 1) { %>
+        <div class="center">
+          <ul class="pagination">
+            <li class="<%= pagination.Cryptocurrency.page === 1 ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.Cryptocurrency.page > 1 ? `/withdrawHistory/${user._id}?cryptoPage=${pagination.Cryptocurrency.page - 1}&limit=${pagination.Cryptocurrency.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_left</i>
+              </a>
+            </li>
+            <% for (let i = 1; i <= pagination.Cryptocurrency.totalPages; i++) { %>
+              <li class="<%= pagination.Cryptocurrency.page === i ? 'active' : 'waves-effect' %>">
+                <a href="/withdrawHistory/<%= user._id %>?cryptoPage=<%= i %>&limit=<%= pagination.Cryptocurrency.limit %>&status=<%= filters.status %>&startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>">
+                  <%= i %>
+                </a>
+              </li>
+            <% } %>
+            <li class="<%= pagination.Cryptocurrency.page === pagination.Cryptocurrency.totalPages ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.Cryptocurrency.page < pagination.Cryptocurrency.totalPages ? `/withdrawHistory/${user._id}?cryptoPage=${pagination.Cryptocurrency.page + 1}&limit=${pagination.Cryptocurrency.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_right</i>
+              </a>
+            </li>
+          </ul>
+          <p>Showing <%= (pagination.Cryptocurrency.page - 1) * pagination.Cryptocurrency.limit + 1 %> to <%= Math.min(pagination.Cryptocurrency.page * pagination.Cryptocurrency.limit, pagination.Cryptocurrency.totalWithdrawals) %> of <%= pagination.Cryptocurrency.totalWithdrawals %> Crypto withdrawals</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- PayPal Withdraw History -->
+    <center>
+      <p class="center">PayPal Withdraw History</p>
+    </center>
+    <div class="container">
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>From</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Withdrew To</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (withdrawals.PayPal && withdrawals.PayPal.length > 0) { %>
+                <% withdrawals.PayPal.forEach(withdrawal => { %>
+                  <tr>
+                    <td><%= withdrawal.narration.split('|')[0].trim() %></td>
+                    <td><%= withdrawal.from %></td>
+                    <td><%= new Date(withdrawal.createdAt).toLocaleDateString() %></td>
+                    <td>$<%= withdrawal.amount.toFixed(2) %></td>
+                    <td><%= withdrawal.narration.split('|')[1]?.trim() || 'N/A' %></td>
+                    <td><%= withdrawal.status %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6"><center>No PayPal withdrawals found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <!-- PayPal Pagination -->
+      <% if (pagination.PayPal.totalPages > 1) { %>
+        <div class="center">
+          <ul class="pagination">
+            <li class="<%= pagination.PayPal.page === 1 ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.PayPal.page > 1 ? `/withdrawHistory/${user._id}?paypalPage=${pagination.PayPal.page - 1}&limit=${pagination.PayPal.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_left</i>
+              </a>
+            </li>
+            <% for (let i = 1; i <= pagination.PayPal.totalPages; i++) { %>
+              <li class="<%= pagination.PayPal.page === i ? 'active' : 'waves-effect' %>">
+                <a href="/withdrawHistory/<%= user._id %>?paypalPage=<%= i %>&limit=<%= pagination.PayPal.limit %>&status=<%= filters.status %>&startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>">
+                  <%= i %>
+                </a>
+              </li>
+            <% } %>
+            <li class="<%= pagination.PayPal.page === pagination.PayPal.totalPages ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.PayPal.page < pagination.PayPal.totalPages ? `/withdrawHistory/${user._id}?paypalPage=${pagination.PayPal.page + 1}&limit=${pagination.PayPal.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_right</i>
+              </a>
+            </li>
+          </ul>
+          <p>Showing <%= (pagination.PayPal.page - 1) * pagination.PayPal.limit + 1 %> to <%= Math.min(pagination.PayPal.page * pagination.PayPal.limit, pagination.PayPal.totalWithdrawals) %> of <%= pagination.PayPal.totalWithdrawals %> PayPal withdrawals</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- GCash Withdraw History -->
+    <center>
+      <p class="center">GCash Withdraw History</p>
+    </center>
+    <div class="container">
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>From</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Withdrew To</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (withdrawals.GCash && withdrawals.GCash.length > 0) { %>
+                <% withdrawals.GCash.forEach(withdrawal => { %>
+                  <tr>
+                    <td><%= withdrawal.narration.split('|')[0].trim() %></td>
+                    <td><%= withdrawal.from %></td>
+                    <td><%= new Date(withdrawal.createdAt).toLocaleDateString() %></td>
+                    <td>$<%= withdrawal.amount.toFixed(2) %></td>
+                    <td><%= withdrawal.narration.split('|')[1]?.trim() || 'N/A' %></td>
+                    <td><%= withdrawal.status %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6"><center>No GCash withdrawals found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <!-- GCash Pagination -->
+      <% if (pagination.GCash.totalPages > 1) { %>
+        <div class="center">
+          <ul class="pagination">
+            <li class="<%= pagination.GCash.page === 1 ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.GCash.page > 1 ? `/withdrawHistory/${user._id}?gcashPage=${pagination.GCash.page - 1}&limit=${pagination.GCash.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_left</i>
+              </a>
+            </li>
+            <% for (let i = 1; i <= pagination.GCash.totalPages; i++) { %>
+              <li class="<%= pagination.GCash.page === i ? 'active' : 'waves-effect' %>">
+                <a href="/withdrawHistory/<%= user._id %>?gcashPage=<%= i %>&limit=<%= pagination.GCash.limit %>&status=<%= filters.status %>&startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>">
+                  <%= i %>
+                </a>
+              </li>
+            <% } %>
+            <li class="<%= pagination.GCash.page === pagination.GCash.totalPages ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.GCash.page < pagination.GCash.totalPages ? `/withdrawHistory/${user._id}?gcashPage=${pagination.GCash.page + 1}&limit=${pagination.GCash.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_right</i>
+              </a>
+            </li>
+          </ul>
+          <p>Showing <%= (pagination.GCash.page - 1) * pagination.GCash.limit + 1 %> to <%= Math.min(pagination.GCash.page * pagination.GCash.limit, pagination.GCash.totalWithdrawals) %> of <%= pagination.GCash.totalWithdrawals %> GCash withdrawals</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- CashApp Withdraw History -->
+    <center>
+      <p class="center">CashApp Withdraw History</p>
+    </center>
+    <div class="container">
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>From</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Withdrew To</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (withdrawals.CashApp && withdrawals.CashApp.length > 0) { %>
+                <% withdrawals.CashApp.forEach(withdrawal => { %>
+                  <tr>
+                    <td><%= withdrawal.narration.split('|')[0].trim() %></td>
+                    <td><%= withdrawal.from %></td>
+                    <td><%= new Date(withdrawal.createdAt).toLocaleDateString() %></td>
+                    <td>$<%= withdrawal.amount.toFixed(2) %></td>
+                    <td><%= withdrawal.narration.split('|')[1]?.trim() || 'N/A' %></td>
+                    <td><%= withdrawal.status %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6"><center>No CashApp withdrawals found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <!-- CashApp Pagination -->
+      <% if (pagination.CashApp.totalPages > 1) { %>
+        <div class="center">
+          <ul class="pagination">
+            <li class="<%= pagination.CashApp.page === 1 ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.CashApp.page > 1 ? `/withdrawHistory/${user._id}?cashappPage=${pagination.CashApp.page - 1}&limit=${pagination.CashApp.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_left</i>
+              </a>
+            </li>
+            <% for (let i = 1; i <= pagination.CashApp.totalPages; i++) { %>
+              <li class="<%= pagination.CashApp.page === i ? 'active' : 'waves-effect' %>">
+                <a href="/withdrawHistory/<%= user._id %>?cashappPage=<%= i %>&limit=<%= pagination.CashApp.limit %>&status=<%= filters.status %>&startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>">
+                  <%= i %>
+                </a>
+              </li>
+            <% } %>
+            <li class="<%= pagination.CashApp.page === pagination.CashApp.totalPages ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.CashApp.page < pagination.CashApp.totalPages ? `/withdrawHistory/${user._id}?cashappPage=${pagination.CashApp.page + 1}&limit=${pagination.CashApp.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_right</i>
+              </a>
+            </li>
+          </ul>
+          <p>Showing <%= (pagination.CashApp.page - 1) * pagination.CashApp.limit + 1 %> to <%= Math.min(pagination.CashApp.page * pagination.CashApp.limit, pagination.CashApp.totalWithdrawals) %> of <%= pagination.CashApp.totalWithdrawals %> CashApp withdrawals</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/dynaFooter')%>

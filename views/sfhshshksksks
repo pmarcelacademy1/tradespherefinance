@@ -1,0 +1,51 @@
+const sendSuspensionEmail = async (fullname, email, isSuspended) => {
+  try {
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // Use SSL
+        auth: {
+              user: 'signalsmine@gmail.com',
+              pass: 'tssunryhtxhibtrx'
+        }
+      });
+      const status = isSuspended ? 'suspended' : 'reactivated';
+      const mailOptions = {
+          from: 'support@signalsmine.org',
+          to: email,
+          subject: `Account ${status.charAt(0).toUpperCase() + status.slice(1)}`,
+          html: `<p>Hello ${fullname},<br>Your account has been ${status}.<br>${
+              isSuspended
+                  ? 'If you believe this is a mistake, please contact support at support@signalsmine.org.'
+                  : 'You can now log in and access all features.'
+          }<br>You can login here: https://signalsmine.org/login.<br>Thank you.</p>`
+      };
+      await transporter.sendMail(mailOptions);
+      console.log('Suspension email sent');
+  } catch (error) {
+      console.error('Error sending suspension email:', error.message);
+  }
+};
+
+
+
+  const sendVerificationEmail = async (email, code) => {
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'signalsmine@gmail.com',
+                pass: 'tssunryhtxhibtrx'
+            }
+        });
+    
+        const mailOptions = {
+            from: 'support@signalsmine.org',
+            to: email,
+            subject: 'Email Verification Code',
+            html: `<p>Your verification code is: <strong>${code}</strong><br>Please enter this code to verify your account.</p>`
+        };
+    
+        await transporter.sendMail(mailOptions);
+    };

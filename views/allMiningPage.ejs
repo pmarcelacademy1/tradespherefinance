@@ -1,0 +1,200 @@
+<%- include('partials/header') %>
+
+<main class="container" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done"><br>
+    <center><a href="/adminRoute" class="btn btn-large" style="background-color:#286090;">ADMIN DASHBOARD</a></center><br>
+    <div class="container">
+      <!-- Filter Dropdown -->
+      <div class="row">
+        <div class="col s12 m4">
+          <label for="statusFilter">Filter by Status</label>
+          <select id="statusFilter" class="browser-default">
+            <option value="all" <%= status === 'all' ? 'selected' : '' %>>All</option>
+            <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="approved" <%= status === 'approved' ? 'selected' : '' %>>Approved</option>
+            <option value="rejected" <%= status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+          </select>
+        </div>
+      </div>
+
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>
+                  <a href="?page=<%= page %>&sort=index&order=<%= sort === 'index' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    S/N
+                    <% if (sort === 'index') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=coin&order=<%= sort === 'coin' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Coin
+                    <% if (sort === 'coin') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=amount&order=<%= sort === 'amount' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Amount ($)
+                    <% if (sort === 'amount') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=profit&order=<%= sort === 'profit' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Profit
+                    <% if (sort === 'profit') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=duration&order=<%= sort === 'duration' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Duration (days)
+                    <% if (sort === 'duration') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=hashRate&order=<%= sort === 'hashRate' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Hash Rate
+                    <% if (sort === 'hashRate') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=status&order=<%= sort === 'status' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Status
+                    <% if (sort === 'status') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (minings.length > 0) { %>
+                <% minings.forEach((element, index) => { %>
+                  <tr>
+                    <td><%= index + 1 + (page - 1) * limit %></td>
+                    <td><%= element.coin %></td>
+                    <td><%= element.amount.toFixed(2) %></td>
+                    <td><%= element.profit.toFixed(6) %> <%= element.coin %></td>
+                    <td><%= element.duration %></td>
+                    <td><%= element.hashRate %></td>
+                    <td>
+                      <span class="status-<%= element.status %>">
+                        <%= element.status.charAt(0).toUpperCase() + element.status.slice(1) %>
+                      </span>
+                    </td>
+                    <td>
+                      <div class="d-flex flex-row gap-2">
+                        <a href="/viewMining/<%= element._id %>" class="btn btn-small" style="background-color:#286090;">
+                          <i class="material-icons">visibility</i>
+                        </a>
+                        <a href="/editMining/<%= element._id %>" class="btn btn-small" style="background-color:#ffc107;">
+                          <i class="material-icons">edit</i>
+                        </a>
+                        <form action="/deleteMining/<%= element._id %>?_method=DELETE" method="POST">
+                          <button type="submit" class="btn btn-small red">
+                            <i class="material-icons">delete</i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="13"><center>No mining records found in the database!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+
+      <!-- Pagination Controls -->
+      <% if (totalPages > 1) { %>
+        <ul class="pagination center">
+          <li class="<%= page === 1 ? 'disabled' : 'waves-effect' %>">
+            <a href="<%= page === 1 ? '#' : `?page=${page - 1}&sort=${sort}&order=${order}&status=${status}` %>">
+              <i class="material-icons">chevron_left</i>
+            </a>
+          </li>
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="<%= page === i ? 'active' : 'waves-effect' %>">
+              <a href="?page=<%= i %>&sort=<%= sort %>&order=<%= order %>&status=<%= status %>"><%= i %></a>
+            </li>
+          <% } %>
+          <li class="<%= page === totalPages ? 'disabled' : 'waves-effect' %>">
+            <a href="<%= page === totalPages ? '#' : `?page=${page + 1}&sort=${sort}&order=${order}&status=${status}` %>">
+              <i class="material-icons">chevron_right</i>
+            </a>
+          </li>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<style>
+  .status-pending {
+    color: orange;
+    font-weight: bold;
+  }
+  .status-approved {
+    color: green;
+    font-weight: bold;
+  }
+  .status-rejected {
+    color: red;
+    font-weight: bold;
+  }
+  .pagination .active {
+    background-color: #286090;
+  }
+  .pagination .disabled a {
+    cursor: not-allowed;
+    color: grey;
+  }
+  th a {
+    color: #286090;
+    text-decoration: none;
+  }
+  th a:hover {
+    text-decoration: underline;
+  }
+  .d-flex {
+    display: flex;
+  }
+  .flex-row {
+    flex-direction: row;
+  }
+  .gap-2 {
+    gap: 10px;
+  }
+</style>
+
+<script>
+  // Handle status filter change
+  document.getElementById('statusFilter').addEventListener('change', function() {
+    const status = this.value;
+    const url = new URL(window.location.href);
+    url.searchParams.set('status', status);
+    url.searchParams.set('page', 1); // Reset to page 1 when filtering
+    window.location.href = url.toString();
+  });
+</script>
+
+<%- include('partials/footer') %>

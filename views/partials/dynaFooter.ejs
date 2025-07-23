@@ -1,0 +1,76 @@
+<script src="//code.jivosite.com/widget/dtenip79Iy" async></script>
+
+
+
+<section>
+      
+    <div class="fixed-footer bgc" style="z-index: 1;">
+        <ul class="tabs"><li class="tab col s4">
+            <a class="active" href="/dashboard">
+                <span class="material-icons notranslate">home</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Home</span></a></li>
+                <li class="tab col s4"><a class="" href="/mining/<%=user._id%>"><span class="material-icons notranslate">token</span>
+                    <span class="hide-on-med-and-down" style="padding-left: 6px;">Mining</span></a></li>
+   
+                        <li class="tab col s4">
+                            <a class="" href="/trade/<%=user._id%>"><span class="material-icons notranslate">browse_gallery</span>
+                                <span class="hide-on-med-and-down" style="padding-left: 6px;">Trade</span></a></li>
+                                <li class="tab col s4">
+                                    <!--<a class="" href="/trades/"><span class="material-icons notranslate">history_edu</span>
+                                        <span class="hide-on-med-and-down" style="padding-left: 6px;">Trades</span></a></li>-->
+                                        </li><li class="tab col s4"><a class="" href="/account/<%=user._id%>"><span class="material-icons notranslate">wallet</span>
+                                            <span class="hide-on-med-and-down" style="padding-left: 6px;">Profile</span></a></li>
+                                        
+                                        </ul></div></section>
+  
+                                        
+  
+  </div></main></div>
+    
+  
+  
+   <!--include footer script-->
+   
+  
+  
+  
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.sidenav');
+    var instances = M.Sidenav.init(elems, options);
+    });
+    
+    // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
+    // var collapsibleElem = document.querySelector('.collapsible');
+    // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
+    
+    // Or with jQuery
+    
+    $(document).ready(function(){
+    $('.sidenav').sidenav();
+    });
+    </script>
+    
+    
+    <script>
+      $(document).ready(function(){
+        $('.tab').click(function(){
+          var tabID = $(this).data('tabid');
+        
+        $('.buttons').children().removeClass('current');
+        
+        $(this).addClass('current');
+        
+        $('.wrapper').children().hide();
+        $('.wrapper').find("[data-blockid="+tabID+"]").show();
+      });
+    });
+    </script>
+    
+   
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  
+  

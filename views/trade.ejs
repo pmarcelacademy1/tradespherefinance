@@ -1,0 +1,273 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <section style="margin-top: 3px;">
+      <div class="row">
+        <div class="col l4 s12">
+          <div class="row">
+            <div class="col s6 l4">
+              <div style="margin-right: 1px; margin-top: 4px; margin-bottom: 0px; display: inline-block;">
+                <select id="options" class="browser-default">
+                  <option value="Crypto">Crypto (43)</option>
+                  <option value="Currencies">Currencies (32)</option>
+                  <option value="Stocks">Stocks (35)</option>
+                  <option value="Indices">Indices (7)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col s6 l4">
+              <div style="margin-right: 1px; margin-top: 4px; margin-bottom: 0px; display: inline-block;">
+                <select id="choices" class="browser-default">
+                  <option value="" disabled selected>Choose a pair</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <br>
+          <ul class="collection">
+            <% if (trades && trades.length > 0) { %>
+              <% trades.forEach(trade => { %>
+                <li class="collection-item app-py-2">
+                  <strong><%= trade.currencypair %></strong><br>
+                  <span><%= trade.action %> | <%= trade.lotsize.toFixed(4) %> lots | $<%= trade.entryPrice.toFixed(2) %></span><br>
+                  <button class="btn red close-trade" data-trade-id="<%= trade._id %>">Close Trade</button>
+                </li>
+              <% }) %>
+            <% } else { %>
+              <li class="collection-item app-py-2">
+                <p id="no-data" style="text-align: center;">
+                  <span class="app-font-normal">NO OPEN TRADES</span>
+                </p>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+        <div class="col l6 s12 m10">
+          <div class="tradingview-widget-container" style="width: 100%; height: 500px;">
+            <iframe id="tradingview-widget" scrolling="no" allowtransparency="true" frameborder="0" src="" style="box-sizing: border-box; display: block; height: calc(100% - 32px); width: 100%;"></iframe>
+            <div class="tradingview-widget-copyright"></div>
+          </div>
+        </div>
+        <div class="col l2 s12 m2 center">
+          <section>
+            <form id="tradeForm">
+              <div class="row">
+                <div class="col l12 s4">
+                  <div>
+                    <label class="active">Amount ($)</label>
+                    <input type="number" name="amount" min="1" step="0.01" required>
+                  </div>
+                </div>
+                <div class="col l12 s4">
+                  <div>
+                    <label class="active">Time (Minutes)</label>
+                    <input type="number" name="time" min="1" max="59" value="10" required>
+                  </div>
+                </div>
+                <div class="col l12 s4">
+                  <div>
+                    <label class="active">Leverage (50 MAX)</label>
+                    <input type="number" name="leverage" min="1" max="50" value="1" required>
+                  </div>
+                </div>
+                <input type="hidden" name="type" id="type" value="Market">
+                <input type="hidden" name="currencypair" id="currencypair">
+                <input type="hidden" name="action" id="action">
+              </div>
+              <div id="formError" style="color: red; display: none;"></div>
+              <div class="row app-py-1">
+                <div class="col s6 l12">
+                  <button type="submit" class="green btn btn-full btn-large" data-action="UP">Buy (UP)</button>
+                </div>
+                <div class="col s6 l12">
+                  <button type="submit" class="red btn btn-full btn-large" data-action="DOWN">Sell (DOWN)</button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<style>
+  .tradingview-widget-copyright {
+    font-size: 13px !important;
+    line-height: 32px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+    color: #B2B5BE !important;
+  }
+  .tradingview-widget-copyright .blue-text {
+    color: #2962FF !important;
+  }
+  .tradingview-widget-copyright a {
+    text-decoration: none !important;
+    color: #B2B5BE !important;
+  }
+  .tradingview-widget-copyright a:visited {
+    color: #B2B5BE !important;
+  }
+  .tradingview-widget-copyright a:hover .blue-text {
+    color: #1E53E5 !important;
+  }
+  .tradingview-widget-copyright a:active .blue-text {
+    color: #1848CC !important;
+  }
+  .tradingview-widget-copyright a:visited .blue-text {
+    color: #2962FF !important;
+  }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  // Lookup for currency pairs
+  const lookup = {
+    'Crypto': ['SOLUSD', 'BTCUSD', 'ETHUSD', 'ADAUSD', 'LTCUSD', 'APEUSD', 'XRPUSD', 'BCHUSD', 'MATICUSD', 'BNBUSD', 'ATOMUSD', 'MKRUSD', 'ZECUSD', 'AXSUSD', 'RUNEUSD', 'KSMUSD', 'FTMUSD', 'CAKEUSD', 'UNIUSD', 'ICPUSD', 'NEARUSD', 'DOTUSD', 'MANAUSD', 'XLMUSD', 'GRTUSD', 'NEOUSD', 'LINKUSD', 'TRXUSD', 'EGLDUSD', 'EOSUSD', 'HBARUSD', 'DASHUSD', 'ALGOUSD', 'XTZUSD', 'FILUSD', 'BSVUSD', 'XMRUSD', 'COMPUSD', 'WBTCUSD', 'AAVEUSD', 'FTTUSD', 'KLAYUSD', 'THETAUSD'],
+    'Currencies': ['AUD/CAD', 'AUD/CHF', 'AUD/JPY', 'AUD/NZD', 'AUD/USD', 'CAD/CHF', 'CAD/JPY', 'EUR/AUD', 'EUR/CAD', 'EUR/CHF', 'EUR/GBP', 'EUR/JPY', 'EUR/NZD', 'EUR/USD', 'GBP/AUD', 'GBP/CAD', 'GBP/CHF', 'GBP/JPY', 'GBP/NZD', 'GBP/USD', 'NZD/CAD', 'NZD/CHF', 'NZD/JPY', 'NZD/USD', 'USD/CAD', 'USD/CHF', 'USD/JPY', 'USD/MXN', 'USD/SGD', 'USD/TRY', 'USD/THB', 'USD/ZAR'],
+    'Stocks': ['Apple', 'Abbott Labs', 'Adobe', 'Analog Devices', 'AETHLON MEDICAL', 'AIG', 'AMC Holdings', 'AMD', 'American Tower', 'Amazon', 'ALPHA PRO TECH', 'aIBM', 'Intel', 'Coca Cola', 'Microsoft', 'Motorola', 'Netflix', 'Nvidia', 'PayPal Inc', 'Rocket Lab USA INC', 'SSR Mining', 'Square', 'Teva', 'Toyota Motor', 'T-Mobile US', 'TripAdvisor', 'Tesla', 'TSMC', 'Twitter', 'United Health Group', 'Visa', 'Verizon', 'Wells Fargo', 'Walmart', 'Exxon Mobil'],
+    'Indices': ['S&P 500 Index', 'US Wall St 30', 'Germany 30', 'US Nas 100', 'UK100GBP', 'US ROSS 2000', 'Australia 200']
+  };
+
+  $(document).ready(function () {
+    // Initialize Materialize select
+    $('select').formSelect();
+
+    // Update choices dropdown
+    $('#options').on('change', function () {
+      const selectValue = $(this).val();
+      $('#choices').empty().append('<option value="" disabled selected>Choose a pair</option>');
+      for (let pair of lookup[selectValue]) {
+        $('#choices').append(`<option value="${pair}">${pair}</option>`);
+      }
+      $('#choices').formSelect();
+      updateTradingView('');
+      // Disable form for non-Crypto options
+      if (selectValue !== 'Crypto') {
+        $('#tradeForm input, #tradeForm button').prop('disabled', true);
+        $('#formError').text('Trading is only available for Crypto pairs.').show();
+      } else {
+        $('#tradeForm input, #tradeForm button').prop('disabled', false);
+        $('#formError').hide();
+      }
+    });
+
+    // Update TradingView widget and currencypair
+    $('#choices').on('change', function () {
+      const pair = $(this).val();
+      $('#currencypair').val(pair);
+      updateTradingView(pair);
+    });
+
+    // Update TradingView widget URL
+    function updateTradingView(pair) {
+      const widget = $('#tradingview-widget');
+      if (!pair) {
+        widget.attr('src', '');
+        return;
+      }
+      const type = $('#options').val();
+      let symbol;
+      if (type === 'Crypto') {
+        symbol = `BINANCE:${pair}`;
+      } else if (type === 'Currencies') {
+        symbol = pair.replace('/', '');
+      } else {
+        symbol = pair.replace(/\s+/g, '');
+      }
+      const url = `https://www.tradingview-widget.com/embed-widget/symbol-overview/?locale=en#%7B%22symbols%22%3A%5B%5B%22${encodeURIComponent(symbol)}%7C1D%22%5D%5D%2C%22chartOnly%22%3Afalse%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22colorTheme%22%3A%22light%22%2C%22showVolume%22%3Afalse%2C%22showMA%22%3Afalse%2C%22hideDateRanges%22%3Afalse%2C%22hideMarketStatus%22%3Afalse%2C%22hideSymbolLogo%22%3Afalse%2C%22scalePosition%22%3A%22right%22%2C%22scaleMode%22%3A%22Normal%22%2C%22fontFamily%22%3A%22-apple-system%2C%20BlinkMacSystemFont%2C%20Trebuchet%20MS%2C%20Roboto%2C%20Ubuntu%2C%20sans-serif%22%2C%22fontSize%22%3A%2210%22%2C%22noTimeScale%22%3Afalse%2C%22valuesTracking%22%3A%221%22%2C%22changeMode%22%3A%22price-and-percent%22%2C%22chartType%22%3A%22area%22%2C%22maLineColor%22%3A%22%232962FF%22%2C%22maLineWidth%22%3A1%2C%22maLength%22%3A9%2C%22lineWidth%22%3A2%2C%22lineType%22%3A0%2C%22dateRanges%22%3A%5B%221d%7C1%22%2C%221m%7C30%22%2C%223m%7C60%22%2C%2212m%7C1D%22%2C%2260m%7C1W%22%2C%22all%7C1M%22%5D%2C%22utm_source%22%3A%22tradespherefinance.com%22%2C%22utm_medium%22%3A%22widget_new%22%2C%22utm_campaign%22%3A%22symbol-overview%22%2C%22page-uri%22%3A%22tradespherefinance.com%2Ftrade%2F%22%7D`;
+      widget.attr('src', url);
+    }
+
+    // Handle form submission for trade placement
+    $('#tradeForm').on('submit', function (e) {
+      e.preventDefault();
+      $('#formError').hide();
+
+      const button = $(e.originalEvent.submitter);
+      $('#action').val(button.data('action'));
+
+      const formData = {
+        type: 'Market',
+        currencypair: $('#currencypair').val(),
+        amount: parseFloat($('input[name="amount"]').val()),
+        time: parseInt($('input[name="time"]').val()),
+        leverage: parseInt($('input[name="leverage"]').val()),
+        action: $('#action').val()
+      };
+
+      // Client-side validation
+      if (!formData.currencypair) {
+        $('#formError').text('Please select a trading pair.').show();
+        return;
+      }
+      if (isNaN(formData.amount) || formData.amount <= 0) {
+        $('#formError').text('Amount must be greater than 0.').show();
+        return;
+      }
+      if (isNaN(formData.time) || formData.time < 1 || formData.time > 59) {
+        $('#formError').text('Time must be between 1 and 59 minutes.').show();
+        return;
+      }
+      if (isNaN(formData.leverage) || formData.leverage < 1 || formData.leverage > 50) {
+        $('#formError').text('Leverage must be between 1 and 50.').show();
+        return;
+      }
+      if (!['UP', 'DOWN'].includes(formData.action)) {
+        $('#formError').text('Please select Buy (UP) or Sell (DOWN).').show();
+        return;
+      }
+
+      $.ajax({
+        url: `/trade/<%= user._id %>`,
+        type: 'POST',
+        data: formData,
+        success: function (response) {
+          if (response.success) {
+            M.toast({ html: 'Trade placed successfully!', classes: 'green' });
+            setTimeout(() => {
+              window.location.href = response.redirect;
+            }, 1000);
+          }
+        },
+        error: function (xhr) {
+          let errorMsg = 'Failed to place trade.';
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMsg = xhr.responseJSON.error;
+          }
+          $('#formError').text(errorMsg).show();
+        }
+      });
+    });
+
+    // Handle manual close trade
+    $('.close-trade').on('click', function () {
+      const tradeId = $(this).data('trade-id');
+      $.ajax({
+        url: `/trade/close/<%= user._id %>/${tradeId}`,
+        type: 'POST',
+        success: function (response) {
+          if (response.success) {
+            M.toast({ html: response.message, classes: 'green' });
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          }
+        },
+        error: function (xhr) {
+          let errorMsg = 'An error occurred';
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMsg = xhr.responseJSON.error;
+          }
+          M.toast({ html: errorMsg, classes: 'red' });
+        }
+      });
+    });
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>

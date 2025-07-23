@@ -1,0 +1,155 @@
+<%- include('partials/header') %>
+
+<main class="container" style="min-height: 100vh;">
+  <div class="fade-appear-done fade-enter-done"><br>
+    <center><a href="/adminRoute" class="btn btn-large" style="background-color:#286090;">ADMIN DASHBOARD</a></center><br>
+    <div class="container">
+      <!-- Error Display -->
+      <% if (messages.error && messages.error.length > 0) { %>
+        <div class="alert alert-danger" role="alert">
+          <%= messages.error %>
+        </div>
+      <% } %>
+
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>
+                  <a href="?page=<%= page %>&sort=index&order=<%= sort === 'index' && order === 'asc' ? 'desc' : 'asc' %>">
+                    S/N
+                    <% if (sort === 'index') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=email&order=<%= sort === 'email' && order === 'asc' ? 'desc' : 'asc' %>">
+                    Email
+                    <% if (sort === 'email') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=username&order=<%= sort === 'username' && order === 'asc' ? 'desc' : 'asc' %>">
+                    Username
+                    <% if (sort === 'username') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=fullname&order=<%= sort === 'fullname' && order === 'asc' ? 'desc' : 'asc' %>">
+                    Fullname
+                    <% if (sort === 'fullname') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=city&order=<%= sort === 'city' && order === 'asc' ? 'desc' : 'asc' %>">
+                    City
+                    <% if (sort === 'city') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=gender&order=<%= sort === 'gender' && order === 'asc' ? 'desc' : 'asc' %>">
+                    Gender
+                    <% if (sort === 'gender') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+              
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (verify.length > 0) { %>
+                <% verify.forEach((element, index) => { %>
+                  <tr>
+                    <td><%= index + 1 + (page - 1) * perPage %></td>
+                    <td><%= element.email %></td>
+                    <td><%= element.username %></td>
+                    <td><%= element.fullname %></td>
+                    <td><%= element.city %></td>
+                    <td><%= element.gender %></td>
+                    <td>
+                      <div class="d-flex flex-row gap-2">
+                        <a href="/viewVerify/<%= element._id %>" class="btn btn-small" style="background-color:#286090;">
+                          <i class="material-icons">visibility</i>
+                        </a>
+                        <form action="/deleteVerify/<%= element._id %>?_method=DELETE" method="POST">
+                          <button type="submit" class="btn btn-small red">
+                            <i class="material-icons">delete</i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="14"><center>No verification records found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+
+      <!-- Pagination Controls -->
+      <% if (totalPages > 1) { %>
+        <ul class="pagination center">
+          <li class="<%= page === 1 ? 'disabled' : 'waves-effect' %>">
+            <a href="<%= page === 1 ? '#' : `?page=${page - 1}&sort=${sort}&order=${order}` %>">
+              <i class="material-icons">chevron_left</i>
+            </a>
+          </li>
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="<%= page === i ? 'active' : 'waves-effect' %>">
+              <a href="?page=<%= i %>&sort=<%= sort %>&order=<%= order %>"><%= i %></a>
+            </li>
+          <% } %>
+          <li class="<%= page === totalPages ? 'disabled' : 'waves-effect' %>">
+            <a href="<%= page === totalPages ? '#' : `?page=${page + 1}&sort=${sort}&order=${order}` %>">
+              <i class="material-icons">chevron_right</i>
+            </a>
+          </li>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<style>
+  .pagination .active {
+    background-color: #286090;
+  }
+  .pagination .disabled a {
+    cursor: not-allowed;
+    color: grey;
+  }
+  th a {
+    color: #286090;
+    text-decoration: none;
+  }
+  th a:hover {
+    text-decoration: underline;
+  }
+  .d-flex {
+    display: flex;
+  }
+  .flex-row {
+    flex-direction: row;
+  }
+  .gap-2 {
+    gap: 10px;
+  }
+</style>
+
+<%- include('partials/footer') %>

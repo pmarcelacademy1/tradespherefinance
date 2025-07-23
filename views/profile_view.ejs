@@ -1,0 +1,40 @@
+<%- include('partials/dashboardHeader')%>
+
+
+
+
+<main class="container" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <div class="row">
+      <div class="col l6 offset-l3 s12">
+        <div class="card-panel">
+          <center>
+            
+            <% if (user.image) { %>
+              <img src="/IMG_UPLOADS/<%= user.image %>" class="circle" height="150px" alt="Profile Picture">
+            <% } else { %>
+              <img src="static/account/assets/images/user.png" class="circle" height="150px" alt="Default Profile Picture">
+            <% } %>
+            
+            
+            <br> <br>
+            <table class="striped">
+              <tbody>
+                <tr>
+                  <td style="text-transform: uppercase;">email</td>
+                  <td><%=user.email%></td></tr>
+                  <tr><td style="text-transform: uppercase;">mobile number</td><td><%=user.phone%></td></tr>
+                  <tr><td style="text-transform: uppercase;">first name</td><td><%=user.first_name%></td></tr>
+                  <tr><td style="text-transform: uppercase;">last name</td><td><%=user.last_name%></td></tr>
+                  <tr><td style="text-transform: uppercase;">street address</td><td><%user.address%></td></tr>
+                  <tr><td style="text-transform: uppercase;">post code</td><td><%=user.zip_code%></td></tr>
+                  <tr><td style="text-transform: uppercase;">city</td><td><%=user.city%></td></tr>
+                  <tr><td style="text-transform: uppercase;">state</td><td><%=user.state%></td></tr>
+                  <tr><td style="text-transform: uppercase;">country</td><td><%=user.country%></td></tr>
+                </tbody>
+              </table>
+            </center></div></div></div></div></main></div>
+
+
+
+            <%- include('partials/dashboardFooter')%>

@@ -1,0 +1,317 @@
+<%- include('partials/_header'); -%>
+
+<%- include('partials/_sidebar'); -%>
+
+<section class="fade-appear-done fade-enter-done">
+
+  <div class="bg">
+    <div class="container">
+      <div class="row" style="display: flex; flex-wrap: wrap-reverse;">
+        <div class="col l6 s12 app-py-3 app-mobile-center">
+          <div>
+            <div class="hide-on-med-and-down"><br><br><br><br></div>
+            <h1>Trading is better with<br> <span class="btn-color">TRADE SPHERE FINANCE</span></h1>
+            <div style="margin-top: 15px;">Raw spreads. Real time trade signals.<br> Round the clock support.</div>
+            <br>
+            <a class="btn white-text" href="/register" style="margin-right: 5px;">Create Account</a>
+            <a class="btn btn-secondary" href="/login">Login Account</a>
+            <br><br><br><br><br>
+          </div>
+        </div>
+        <div class="col l6 s12">
+          <br><br>
+          <center>
+            <video loop="" autoplay="" playsinline="" class="responsive-video" src="static/ravencoinfinance/assets/videos/laptop.mp4"></video>
+          </center>
+          <br>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="bg bg-secondary app-bg-numbers white-text">
+    <div class="app-py-1">
+      <br><br>
+      <h2 class="white-text center wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">1 Account 200+ Products</h2>
+      <p class="wow animated animatedFadeInUp fadeInUp slow container-50 f-22 center" style="margin: auto; visibility: visible;">
+        Diversify your portfolio with access to over 15,000 products across 7 asset classes. Trade CFDs on Forex, Futures, Indices, Metals, Energies and Shares.
+      </p>
+      <br><br>
+      <div class="row container">
+        <div class="">
+          <div class="col l3 s12 app-px-1 wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+            <div class="trans-card">
+              <img src="static/ravencoinfinance/assets/images/site/IconCrypto.png" style="height: 50px;">
+              <h3 class="white-text">Crypto</h3>
+              <p>Trade and Mine Bitcoin and Other Leading Crypto Currencies with Decentralized Finance</p>
+              <a href="bitcoin_mining/index.html"><span class="material-icons notranslate">arrow_forward</span></a>
+              <br>
+            </div><br><br>
+          </div>
+          <div class="col l3 s12 app-px-1 wow animated animatedFadeInUp fadeInUp slow" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s;">
+            <div class="trans-card">
+              <img src="static/ravencoinfinance/assets/images/site/IconCopy.png" style="height: 50px;">
+              <h3 class="white-text">Copy</h3>
+              <p>Copy trading allows you to directly copy the positions taken by another trader. You simply copy everything</p>
+              <a href="/copy_trading"><span class="material-icons notranslate">arrow_forward</span></a>
+              <br>
+            </div><br><br><br>
+          </div>
+          <div class="col l3 s12 app-px-1 wow animated animatedFadeInUp fadeInUp slow" data-wow-delay="0.4s" style="visibility: visible; animation-delay: 0.4s;">
+            <div class="trans-card">
+              <img src="static/ravencoinfinance/assets/images/site/IconForex.png" style="height: 50px;">
+              <h3 class="white-text">Forex</h3>
+              <p>Trade currency pairs and be able to implement your own trading strategies with minimum slippage</p>
+              <a href="forex_trading/index.html"><span class="material-icons notranslate">arrow_forward</span></a>
+              <br>
+            </div><br><br><br>
+          </div>
+          <div class="col l3 s12 app-px-1 wow animated animatedFadeInUp fadeInUp slow" data-wow-delay="0.6s" style="visibility: visible; animation-delay: 0.6s;">
+            <div class="trans-card">
+              <img src="static/ravencoinfinance/assets/images/site/IconStocks.png" style="height: 50px;">
+              <h3 class="white-text">Stocks</h3>
+              <p>Stocks, also commonly referred to as shares, are issued by a public company and put up for sale.</p>
+              <a href="/stocks_trading"><span class="material-icons notranslate">arrow_forward</span></a>
+            </div><br><br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bg app-py-3">
+    <div class="container">
+      <div class="container row">
+        <div class="col l6 s12">
+          <br><br><br>
+          <h2 class="wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">Lightning speed execution with razor-thin spreads</h2>
+          <br>
+          <p class="wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">You get the best trading conditions :</p>
+          <span class="material-icons notranslate btn-color">check_circle_outline</span><b>Zero commission </b><br><br>
+          <span class="material-icons notranslate btn-color">check_circle_outline</span><b>Spreads from 0.0 pips</b><br><br>
+          <span class="material-icons notranslate btn-color">check_circle_outline</span><b>Copy Trading Available</b><br><br>
+        </div>
+        <div class="col l6 s12">
+          <center>
+            <video loop="" playsinline="" autoplay="" class="responsive-video" src="static/ravencoinfinance/assets/videos/flowchart.mp4"></video>
+          </center>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <div id="tradingview_3e2"></div>
+    <div class="tradingview-widget-copyright"></div>
+    <div>
+      <div style="width: 100%; height: 46px;">
+        <style>
+          .tradingview-widget-copyright {
+            font-size: 13px !important;
+            line-height: 32px !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+            color: #9db2bd !important;
+          }
+          .tradingview-widget-copyright .blue-text {
+            color: #2962FF !important;
+          }
+          .tradingview-widget-copyright a {
+            text-decoration: none !important;
+            color: #9db2bd !important;
+          }
+          .tradingview-widget-copyright a:visited {
+            color: #9db2bd !important;
+          }
+          .tradingview-widget-copyright a:hover .blue-text {
+            color: #1E53E5 !important;
+          }
+          .tradingview-widget-copyright a:active .blue-text {
+            color: #1848CC !important;
+          }
+          .tradingview-widget-copyright a:visited .blue-text {
+            color: #2962FF !important;
+          }
+        </style>
+        <iframe scrolling="no" allowtransparency="true" frameborder="0" src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22description%22%3A%22%22%2C%22proName%22%3A%22BINANCE%3ABTCUSDT%22%7D%2C%7B%22description%22%3A%22%22%2C%22proName%22%3A%22BINANCE%3AETHUSDT%22%7D%2C%7B%22description%22%3A%22%22%2C%22proName%22%3A%22BINANCE%3AMATICUSDT%22%7D%2C%7B%22description%22%3A%22%22%2C%22proName%22%3A%22BINANCE%3ASOLUSDT%22%7D%2C%7B%22description%22%3A%22%22%2C%22proName%22%3A%22BINANCE%3AMANAUSDT%22%7D%2C%7B%22description%22%3A%22%22%2C%22proName%22%3A%22FX%3AEURUSD%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22colorTheme%22%3A%22light%22%2C%22isTransparent%22%3Afalse%2C%22displayMode%22%3A%22regular%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A46%2C%22utm_source%22%3A%22ravencoinfinance.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22ticker-tape%22%2C%22page-uri%22%3A%22ravencoinfinance.com%2F%22%7D" style="box-sizing: border-box; display: block; height: 46px; width: 100%;"></iframe>
+      </div>
+    </div>
+  </div>
+  <section class="bg app-py-2">
+    <div class="row container">
+      <div class="col l6 s12 wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+        <img src="static/ravencoinfinance/assets/images/svgs/BBLaptopLight.svg" class="responsive-img" style="max-height: 70vh;">
+      </div>
+      <div class="col l6 s12 wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+        <div class="container">
+          <br><br><br><br><br>
+          <h1 class="app-mobile-center">Copy Expert Traders</h1>
+          <br>
+          <p class="f-22 app-text-justify">It’s all in the name! Copy trading allows you to directly copy the positions taken by another trader. You decide the amount you wish to invest and simply copy everything they do automatically in real-time – when that trader makes a trade, your account will make that same trade as well.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bg bg-secondary app-bg-numbers app-py-3">
+    <br>
+    <div class="center wow animated animatedFadeInUp fadeInUp slow container" style="visibility: visible;">
+      <h2>A Trading Account For Every Trader</h2>
+      <br>
+      <p class="container-50" style="margin: auto;">We offer a variety of trading accounts to match every trading style across all levels of experience. Whether you’re a scalper or day trader, use EAs or are a discretionary trader, we have you covered.</p>
+      <br><br>
+    </div>
+    <div class="row container">
+      <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+        <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+          <center>
+            <span>BRONZE</span><br>
+            <span class="alt-color" style="font-size: 38px; font-weight: bold;">$1,000</span><br><br><br>
+            <p>Deposit : $1,000 - $4,999</p>
+            <p>Referral Bonus</p>
+            <p>24/7 Customer Service</p>
+            <p>Professional Chart</p>
+            <p>Trading Alert</p>
+            <p>Trading Central (Basic)</p>
+            <p>A Personal Coach</p>
+            <p>Sms & Email Alert</p>
+            <p>Live Trading with Expert</p>
+            <p>Financial Expert Session</p>
+            <a class="btn" href="/login">PURCHASE PLAN</a>
+          </center>
+        </div>
+      </div>
+      <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+        <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+          <center>
+            <span>SILVER</span><br>
+            <span class="alt-color" style="font-size: 38px; font-weight: bold;">$5,000</span><br><br><br>
+            <p>Deposit : $5,000 - $10,000</p>
+            <p>Referral Bonus</p>
+            <p>24/7 Customer Service</p>
+            <p>Professional Chart</p>
+            <p>Trading Alert</p>
+            <p>Trading Central (Basic)</p>
+            <p>A Personal Coach</p>
+            <p>Sms & Email Alert</p>
+            <p>Live Trading with Expert</p>
+            <p>Financial Expert Session</p>
+            <a class="btn" href="/login">PURCHASE PLAN</a>
+          </center>
+        </div>
+      </div>
+      <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+        <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+          <center>
+            <span>GOLD</span><br>
+            <span class="alt-color" style="font-size: 38px; font-weight: bold;">$10,000</span><br><br><br>
+            <p>Deposit : $10,000 - $15,000</p>
+            <p>Referral Bonus</p>
+            <p>24/7 Customer Service</p>
+            <p>Professional Chart</p>
+            <p>Trading Alert</p>
+            <p>Trading Central (Basic)</p>
+            <p>A Personal Coach</p>
+            <p>Sms & Email Alert</p>
+            <p>Live Trading with Expert</p>
+            <p>Financial Expert Session</p>
+            <a class="btn" href="/login">PURCHASE PLAN</a>
+          </center>
+        </div>
+      </div>
+      <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+        <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+          <center>
+            <span>PLATINUM</span><br>
+            <span class="alt-color" style="font-size: 38px; font-weight: bold;">$15,000</span><br><br><br>
+            <p>Deposit : $15,000 - $20,000</p>
+            <p>Referral Bonus</p>
+            <p>24/7 Customer Service</p>
+            <p>Professional Chart</p>
+            <p>Trading Alert</p>
+            <p>Trading Central (Basic)</p>
+            <p>A Personal Coach</p>
+            <p>Sms & Email Alert</p>
+            <p>Live Trading with Expert</p>
+            <p>Financial Expert Session</p>
+            <a class="btn" href="/login">PURCHASE PLAN</a>
+          </center>
+        </div>
+      </div>
+    </div><br>
+  </section>
+  <section class="bg app-py-3 app-mobile-center">
+    <div class="container">
+      <div class="row container" style="display: flex; align-items: center; flex-wrap: wrap-reverse;">
+        <div class="col l6 s12">
+          <h2 class="wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">Unrivaled 24/7 Customer Service</h2>
+          <br>
+          <p class="wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">Got an issue? We respond under 5 minutes<br> on live chat and solve the problem for you.</p>
+          <b><span class="material-icons notranslate alt-color">chevron_right</span>Contact us anytime, from anywhere</b><br>
+          <b><span class="material-icons notranslate alt-color">chevron_right</span>One-to-one trading support for all clients</b><br><br>
+        </div>
+        <div class="col l6 s12">
+          <div class="container">
+            <center>
+              <img src="static/ravencoinfinance/assets/images/site/Headset.webp" class="responsive-img" style="max-height: 60vh;">
+            </center>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="app-py-3">
+    <br><br>
+    <div class="">
+      <h2 class="center wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">Trade <span class="btn-color">120+</span> Instruments at your Fingertips</h2>
+      <p class="center container wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+        Choose from a range of global markets and trade on extremely tight spreads.
+      </p>
+      <br><br><br>
+      <div class="row center">
+        <div class="container">
+          <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow" style="visibility: visible;">
+            <div class="card-panel">
+              <img src="static/ravencoinfinance/assets/images/svgs/World.svg" style="height: 93px;">
+              <h3 class="btn-color">Copy</h3>
+              <p>Copy trading allows you to directly copy the positions taken by another trader. You simply copy everything</p>
+              <a href="/copy_trading">Learn More</a>
+            </div><br><br>
+          </div>
+          <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s;">
+            <div class="card-panel">
+              <img src="static/ravencoinfinance/assets/images/svgs/Forex.svg" style="height: 93px;">
+              <h3 class="btn-color">Forex</h3>
+              <p>Trade currency pairs and be able to implement your own trading strategies with minimum slippage</p>
+              <a href="/forex_trading">Learn More</a>
+            </div><br><br>
+          </div>
+          <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow" data-wow-delay="0.4s" style="visibility: visible; animation-delay: 0.4s;">
+            <div class="card-panel">
+              <img src="static/ravencoinfinance/assets/images/svgs/Crypto.svg" style="height: 93px;">
+              <h3 class="btn-color">Crypto</h3>
+              <p>Buy and sell Bitcoin and other leading crypto currencies with ease on our platform</p>
+              <a href="/crypto_trading">Learn More</a><br>
+            </div><br>
+          </div>
+          <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow" data-wow-delay="0.6s" style="visibility: visible; animation-delay: 0.6s;">
+            <div class="card-panel">
+              <img src="static/ravencoinfinance/assets/images/svgs/Stocks.svg" style="height: 93px;">
+              <h3 class="btn-color">Stocks</h3>
+              <p>Stocks, also commonly referred to as shares, are issued by a public corporation and put up for sale.</p>
+              <a href="/stocks_trading">Learn More</a><br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bg bg-secondary center app-py-3 app-bg-numbers2">
+    <div class="container-50 app-py-3" style="margin: auto;">
+      <h2 class="white-text">Get Started! Sign up and Access the TRADE SPHERE FINANCE in less than 3 minutes</h2>
+      <br>
+      <a class="btn btn-large" href="/register" style="margin-right: 5px;">Signup Now</a>
+      <a class="btn btn-large btn-white-trans" href="/login">Login Now</a>
+    </div>
+  </section>
+</section>
+
+<%- include('partials/_footer'); -%>

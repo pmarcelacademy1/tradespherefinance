@@ -1,0 +1,142 @@
+<%- include('partials/header') %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Header Section -->
+      <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-dark">Editing Deposit</h1>
+        <div class="text-end">
+          <small><b>Deposit ID:</b> <%= deposit._id %></small>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/adminRoute">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="/allFunding">All Deposits</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Deposit <%= deposit._id %></li>
+        </ol>
+      </nav>
+
+      <!-- Edit Form -->
+      <form action="/editDeposit/<%= deposit._id %>?_method=PUT" method="POST" class="bg-light p-4 rounded shadow" enctype="application/x-www-form-urlencoded">
+        <!-- Error Display -->
+        <% if (error) { %>
+          <div class="alert alert-danger" role="alert">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Deposit Information -->
+        <h4 class="mb-3">Deposit Information</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="<%= deposit.amount.toFixed(2) %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="accountType" class="form-label">Account Type</label>
+            <input type="text" class="form-control" id="accountType" name="accountType" value="<%= deposit.accountType %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="paymentMethod" class="form-label">Payment Method</label>
+            <input type="text" class="form-control" id="paymentMethod" name="paymentMethod" value="<%= deposit.paymentMethod %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-control" id="status" name="status" required style="display: block; height: calc(2.25rem + 2px);">
+              <option value="" disabled <%= !deposit.status ? 'selected' : '' %>>Select Status</option>
+              <option value="pending" <%= deposit.status === 'pending' ? 'selected' : '' %>>Pending</option>
+              <option value="completed" <%= deposit.status === 'completed' ? 'selected' : '' %>>Completed</option>
+              <option value="failed" <%= deposit.status === 'failed' ? 'selected' : '' %>>Failed</option>
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid status.
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-primary">Update Deposit</button>
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" id="deleteButton" data-bs-target="#deleteModal">Delete Deposit</button>
+        </div>
+      </form>
+
+      <!-- Delete Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Confirm Deposit Deletion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>This will remove the deposit record with ID <b><%= deposit._id %></b>.<br>Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form action="/deleteDeposit/<%= deposit._id %>?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-primary">Yes, Remove Deposit</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Form validation
+  document.querySelector('form').addEventListener('submit', (e) => {
+    const statusSelect = document.getElementById('status');
+    if (!statusSelect.value) {
+      e.preventDefault();
+      statusSelect.classList.add('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'block';
+    } else {
+      statusSelect.classList.remove('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'none';
+    }
+  });
+
+  // Ensure dropdown is visible on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const statusSelect = document.getElementById('status');
+    statusSelect.style.display = 'block'; // Force visibility
+    console.log('Status dropdown rendered:', statusSelect); // Debug
+  });
+</script>
+
+<style>
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  .is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  }
+  .invalid-feedback {
+    display: none;
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+  }
+  .form-control, .form-select {
+    display: block !important; /* Ensure visibility */
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+</style>
+
+<%- include('partials/footer') %>

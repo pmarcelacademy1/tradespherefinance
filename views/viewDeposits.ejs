@@ -1,0 +1,203 @@
+<%- include('partials/header') %>
+
+<div class="container text-white" style="min-height: 100vh; background-color: #212529;">
+  <!-- Flash Messages -->
+  <% if (messages.error) { %>
+    <div class="row">
+      <div class="col s12">
+        <div class="card red darken-1">
+          <div class="card-content white-text">
+            <span class="card-title">Error</span>
+            <p><%= messages.error %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Deposit Details</h1>
+    <div class="text-end">
+      <small><b>Deposit ID:</b> <%= deposit._id %></small><br>
+      <small><b>Last Updated:</b> <%= new Date(deposit.updatedAt).toLocaleString() %></small>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-dark text-white">
+      <li class="breadcrumb-item"><a href="/adminRoute" class="text-white">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="/allFunding" class="text-white">All Deposits</a></li>
+      <li class="breadcrumb-item active text-white" aria-current="page">
+        <%= deposit.owner ? `${deposit.owner.first_name} ${deposit.owner.last_name}` : 'Unknown User' %>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Deposit Details -->
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Deposit Information</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Amount:</b></div>
+              <div class="col-8">$<%= deposit.amount.toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Account Type:</b></div>
+              <div class="col-8"><%= deposit.accountType %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Payment Method:</b></div>
+              <div class="col-8"><%= deposit.paymentMethod %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Status:</b></div>
+              <div class="col-8">
+                <span class="<%= deposit.status === 'pending' ? 'yellow-text' : deposit.status === 'completed' ? 'green-text' : 'red-text' %>">
+                  <%= deposit.status.charAt(0).toUpperCase() + deposit.status.slice(1) %>
+                </span>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Transaction ID:</b></div>
+              <div class="col-8"><%= deposit.txid %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Owner:</b></div>
+              <div class="col-8">
+                <%= deposit.owner ? `${deposit.owner.first_name} ${deposit.owner.last_name} (${deposit.owner.email})` : 'Unknown User' %>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Deposit Proof & Timestamps</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Deposit Proof:</b></div>
+              <div class="col-8">
+                <% if (deposit.image) { %>
+                 <a href="<%= deposit.image %>" target="_blank">View</a>
+                <% } else { %>
+                  <span>No proof uploaded</span>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Created At:</b></div>
+              <div class="col-8"><%= new Date(deposit.createdAt).toLocaleString() %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Updated At:</b></div>
+              <div class="col-8"><%= new Date(deposit.updatedAt).toLocaleString() %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="row">
+    <div class="col s12">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-content">
+          <div class="d-flex flex-row gap-2">
+            <a href="/editDeposit/<%= deposit._id %>" class="btn" style="background-color:#ffc107;">
+              <i class="material-icons left">edit</i>Edit Deposit
+            </a>
+            <form action="/deleteDeposit/<%= deposit._id %>?_method=DELETE" method="POST">
+              <button type="submit" class="btn red">
+                <i class="material-icons left">delete</i>Delete Deposit
+              </button>
+            </form>
+            <a href="/allFunding" class="btn grey">
+              <i class="material-icons left">arrow_back</i>Back to Deposits
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .d-flex {
+    display: flex;
+  }
+  .flex-row {
+    flex-direction: row;
+  }
+  .gap-2 {
+    gap: 10px;
+  }
+  .breadcrumb {
+    background-color: #212529 !important;
+  }
+  .yellow-text {
+    color: #ffeb3b !important;
+    font-weight: bold;
+  }
+  .green-text {
+    color: #4caf50 !important;
+    font-weight: bold;
+  }
+  .red-text {
+    color: #f44336 !important;
+    font-weight: bold;
+  }
+
+  .form-actions-sticky {
+  position: sticky;
+  bottom: 20px;
+  background: #f8f9fa; /* Light background to match bg-light form */
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000; /* Ensure buttons stay above other content */
+  border-radius: 0.25rem;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for visibility */
+}
+
+/* Ensure the form has enough padding at the bottom to avoid overlap */
+form {
+  padding-bottom: 80px; /* Adjust based on button height */
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .form-actions-sticky {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .form-actions-sticky button {
+    width: 100%; /* Full-width buttons on small screens */
+  }
+}
+</style>
+
+<%- include('partials/footer') %>

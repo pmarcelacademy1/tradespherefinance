@@ -1,0 +1,594 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <div class="container"><br>
+      <!-- History Buttons -->
+      <center>
+        <a href="/upgradeHistory/<%= user._id %>" class="newbtn">View Upgrade History</a>
+        <a href="/miningHistory/<%= user._id %>" class="newbtn">View Mining History</a>
+      </center><br>
+      <div class="row">
+        <div class="col l3 s12 center">
+          <h2>Pricing</h2><br>
+          <ul class="collection">
+            <a class="collection-item bg trading-plans-btn" style="cursor: pointer;"><li>Trading Plans</li></a>
+            <a class="collection-item bg mining-plans-btn" style="cursor: pointer;"><li>Mining Plans</li></a>
+          </ul>
+        </div>
+        <div class="col l9 s12">
+          <!-- Trading Plans -->
+          <div class="row trading-plans">
+            <!-- BRONZE -->
+            <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>BRONZE</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$1,000</span><br><br><br>
+                  <p>Deposit: $1,000 - $4,999</p>
+                  <p>Referral Bonus</p>
+                  <p>24/7 Customer Service</p>
+                  <p>Professional Chart</p>
+                  <p>Trading Alert</p>
+                  <p>Trading Central (Basic)</p>
+                  <p>A Personal Coach</p>
+                  <p>Sms & Email Alert</p>
+                  <p>Live Trading with Expert</p>
+                  <p>Financial Expert Session</p>
+                  <a class="newbtn buy-btn" data-plan="BRONZE" data-min="1000" data-max="4999">BUY</a>
+                </center>
+              </div>
+            </div>
+            <!-- SILVER -->
+            <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>SILVER</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$5,000</span><br><br><br>
+                  <p>Deposit: $5,000 - $10,000</p>
+                  <p>Referral Bonus</p>
+                  <p>24/7 Customer Service</p>
+                  <p>Professional Chart</p>
+                  <p>Trading Alert</p>
+                  <p>Trading Central (Basic)</p>
+                  <p>A Personal Coach</p>
+                  <p>Sms & Email Alert</p>
+                  <p>Live Trading with Expert</p>
+                  <p>Financial Expert Session</p>
+                  <a class="newbtn buy-btn" data-plan="SILVER" data-min="5000" data-max="10000">BUY</a>
+                </center>
+              </div>
+            </div>
+            <!-- GOLD -->
+            <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>GOLD</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$10,000</span><br><br><br>
+                  <p>Deposit: $10,000 - $15,000</p>
+                  <p>Referral Bonus</p>
+                  <p>24/7 Customer Service</p>
+                  <p>Professional Chart</p>
+                  <p>Trading Alert</p>
+                  <p>Trading Central (Basic)</p>
+                  <p>A Personal Coach</p>
+                  <p>Sms & Email Alert</p>
+                  <p>Live Trading with Expert</p>
+                  <p>Financial Expert Session</p>
+                  <a class="newbtn buy-btn" data-plan="GOLD" data-min="10000" data-max="15000">BUY</a>
+                </center>
+              </div>
+            </div>
+            <!-- PLATINUM -->
+            <div class="col l3 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>PLATINUM</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$15,000</span><br><br><br>
+                  <p>Deposit: $15,000 - $20,000</p>
+                  <p>Referral Bonus</p>
+                  <p>24/7 Customer Service</p>
+                  <p>Professional Chart</p>
+                  <p>Trading Alert</p>
+                  <p>Trading Central (Basic)</p>
+                  <p>A Personal Coach</p>
+                  <p>Sms & Email Alert</p>
+                  <p>Live Trading with Expert</p>
+                  <p>Financial Expert Session</p>
+                  <a class="newbtn buy-btn" data-plan="PLATINUM" data-min="15000" data-max="20000">BUY</a>
+                </center>
+              </div>
+            </div>
+          </div>
+          <!-- Mining Plans -->
+          <div class="row mining-plans" style="display: none;">
+            <!-- Bitcoin -->
+            <div class="col l3 m6 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>Bitcoin</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$1,000</span><br><br><br>
+                  <p>Deposit: $1,000 - $20,000</p>
+                  <p>Hash Rate: <%= miningDetails.Bitcoin.hashRate %></p>
+                  <p>Duration: <%= miningDetails.Bitcoin.duration %> days</p>
+                  <p>Daily Profit: <%= (miningDetails.Bitcoin.baseProfit / miningDetails.Bitcoin.duration).toFixed(6) %> BTC</p>
+                  <p>24/7 Support</p>
+                  <p>Low Maintenance Fee</p>
+                  <p>Basic Mining Dashboard</p>
+                  <a class="newbtn mine-btn" data-coin="Bitcoin" data-min="1000" data-max="20000">BUY</a>
+                </center>
+              </div>
+            </div>
+            <!-- Ethereum -->
+            <div class="col l3 m6 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>Ethereum</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$800</span><br><br><br>
+                  <p>Deposit: $800 - $15,000</p>
+                  <p>Hash Rate: <%= miningDetails.Ethereum.hashRate %></p>
+                  <p>Duration: <%= miningDetails.Ethereum.duration %> days</p>
+                  <p>Daily Profit: <%= (miningDetails.Ethereum.baseProfit / miningDetails.Ethereum.duration).toFixed(6) %> ETH</p>
+                  <p>24/7 Support</p>
+                  <p>Medium Maintenance Fee</p>
+                  <p>Advanced Mining Dashboard</p>
+                  <a class="newbtn mine-btn" data-coin="Ethereum" data-min="800" data-max="15000">BUY</a>
+                </center>
+              </div>
+            </div>
+            <!-- BNB -->
+            <div class="col l3 m6 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>BNB</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$500</span><br><br><br>
+                  <p>Deposit: $500 - $10,000</p>
+                  <p>Hash Rate: <%= miningDetails.BNB.hashRate %></p>
+                  <p>Duration: <%= miningDetails.BNB.duration %> days</p>
+                  <p>Daily Profit: <%= (miningDetails.BNB.baseProfit / miningDetails.BNB.duration).toFixed(6) %> BNB</p>
+                  <p>24/7 Support</p>
+                  <p>Low Maintenance Fee</p>
+                  <p>Pro Mining Dashboard</p>
+                  <a class="newbtn mine-btn" data-coin="BNB" data-min="500" data-max="10000">BUY</a>
+                </center>
+              </div>
+            </div>
+            <!-- Doge -->
+            <div class="col l3 m6 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>Doge</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$200</span><br><br><br>
+                  <p>Deposit: $200 - $5,000</p>
+                  <p>Hash Rate: <%= miningDetails.Doge.hashRate %></p>
+                  <p>Duration: <%= miningDetails.Doge.duration %> days</p>
+                  <p>Daily Profit: <%= (miningDetails.Doge.baseProfit / miningDetails.Doge.duration).toFixed(2) %> DOGE</p>
+                  <p>24/7 Support</p>
+                  <p>No Maintenance Fee</p>
+                  <p>Elite Mining Dashboard</p>
+                  <a class="newbtn mine-btn" data-coin="Doge" data-min="200" data-max="5000">BUY</a>
+                </center>
+              </div>
+            </div>
+            <!-- Atom -->
+            <div class="col l3 m6 s12 wow animated animatedFadeInUp fadeInUp slow">
+              <div class="card hoverable app-py-1 app-px-2" style="border-radius: 10px;">
+                <center>
+                  <span>Atom</span><br>
+                  <span class="alt-color" style="font-size: 38px; font-weight: bold;">$100</span><br><br><br>
+                  <p>Deposit: $100 - $3,000</p>
+                  <p>Hash Rate: <%= miningDetails.Atom.hashRate %></p>
+                  <p>Duration: <%= miningDetails.Atom.duration %> days</p>
+                  <p>Daily Profit: <%= (miningDetails.Atom.baseProfit / miningDetails.Atom.duration).toFixed(2) %> ATOM</p>
+                  <p>24/7 Support</p>
+                  <p>No Maintenance Fee</p>
+                  <p>Premium Mining Dashboard</p>
+                  <a class="newbtn mine-btn" data-coin="Atom" data-min="100" data-max="3000">BUY</a>
+                </center>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgradeModal" class="modal">
+      <div class="modal-content">
+        <h4 id="modalPlanName"></h4>
+        <div id="formError" style="color: #ff4d4d; display: none;"></div>
+        <form id="upgradeForm" enctype="multipart/form-data">
+          <div class="input-field">
+            <select name="accountType" id="accountType" class="browser-default" required>
+              <option value="" disabled selected>Select Account Type</option>
+              <% user.accountTypes.forEach(account => { %>
+                <option value="<%= account.name %>">
+                  <%= account.name %> ($<%= account.minDeposit.toFixed(2) %>)
+                </option>
+              <% }) %>
+            </select>
+            <label>Account Type</label>
+          </div>
+          <div class="input-field">
+            <input type="number" name="amount" id="amount" required>
+            <label for="amount">Amount ($)</label>
+          </div>
+          <div class="file-field input-field">
+            <div class="btn upload-btn">
+              <span>Upload Proof</span>
+              <input type="file" name="image" id="image" accept="image/*" required>
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="Proof of Payment">
+            </div>
+          </div>
+          <input type="hidden" name="Plan" id="planInput">
+          <div class="center">
+            <button type="submit" class="btn submit-btn">Submit Upgrade</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close btn-flat cancel-btn">Cancel</a>
+      </div>
+    </div>
+
+    <!-- Mining Modal -->
+    <div id="miningModal" class="modal">
+      <div class="modal-content">
+        <h4 id="modalCoinName"></h4>
+        <div id="miningFormError" style="color: #ff4d4d; display: none;"></div>
+        <form id="miningForm" enctype="multipart/form-data">
+          <div class="input-field">
+            <select name="accountType" id="miningAccountType" class="browser-default" required>
+              <option value="" disabled selected>Select Account Type</option>
+              <% user.accountTypes.forEach(account => { %>
+                <option value="<%= account.name %>">
+                  <%= account.name %> ($<%= account.minDeposit.toFixed(2) %>)
+                </option>
+              <% }) %>
+            </select>
+            <label>Account Type</label>
+          </div>
+          <div class="input-field">
+            <input type="number" name="amount" id="miningAmount" required>
+            <label for="miningAmount">Amount ($)</label>
+          </div>
+          <div class="input-field">
+            <input type="text" id="totalProfit" readonly>
+            <label for="totalProfit">Total Profit</label>
+          </div>
+          <div class="file-field input-field">
+            <div class="btn upload-btn">
+              <span>Upload Proof</span>
+              <input type="file" name="image" id="miningImage" accept="image/*" required>
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="Proof of Payment">
+            </div>
+          </div>
+          <input type="hidden" name="coin" id="coinInput">
+          <div class="center">
+            <button type="submit" class="btn submit-btn">Submit Mining Request</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close btn-flat cancel-btn">Cancel</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<style>
+  .newbtn {
+    background-color: #286090;
+    border-color: #122b40;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 30px;
+    border-width: 0;
+    margin-top: 15px;
+    padding: 10px 32px;
+    color: white;
+    margin-right: 10px;
+  }
+
+  /* Ensure card consistency */
+  .card {
+    width: 100%;
+    min-height: 400px; /* Adjust as needed */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-content {
+    flex-grow: 1;
+  }
+
+  /* Modal Styles (Upgrade and Mining) */
+  #upgradeModal, #miningModal {
+    background-color: #000000;
+    color: #ffffff;
+    border-radius: 8px;
+  }
+
+  .modal-content {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  .modal-content h4 {
+    color: #ffffff;
+    font-weight: bold;
+  }
+
+  .modal-content label {
+    color: #b0b0b0;
+  }
+
+  .modal-content input[type="number"],
+  .modal-content input[type="text"],
+  .modal-content select {
+    color: #ffffff;
+    border-bottom: 1px solid #b0b0b0;
+    background-color: #1a1a1a;
+  }
+
+  .modal-content input[type="number"]:focus,
+  .modal-content input[type="text"]:focus,
+  .modal-content select:focus {
+    border-bottom: 1px solid #ffffff;
+    box-shadow: 0 1px 0 0 #ffffff;
+  }
+
+  .modal-content select option {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+
+  .modal-content .file-field .btn.upload-btn {
+    background-color: #286090;
+    color: #ffffff;
+  }
+
+  .modal-content .file-field .btn.upload-btn:hover {
+    background-color: #3a7ab5;
+  }
+
+  .modal-content .submit-btn {
+    background-color: #286090;
+    color: #ffffff;
+  }
+
+  .modal-content .submit-btn:hover {
+    background-color: #3a7ab5;
+  }
+
+  .modal-footer {
+    background-color: #000000;
+  }
+
+  .modal-footer .cancel-btn {
+    color: #b0b0b0;
+  }
+
+  .modal-footer .cancel-btn:hover {
+    color: #ffffff;
+  }
+
+  /* Mining plans grid with flexbox */
+  .mining-plans {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .mining-plans .col {
+    flex: 1 1 250px; /* Base width for cards, adjust as needed */
+    max-width: 300px; /* Optional: cap the card width */
+    margin: 0; /* Remove default margins */
+  }
+
+  .mining-plans .card {
+    height: 100%; /* Ensure cards stretch to equal height */
+  }
+
+  /* Remove nested row for Atom card to treat it as part of the flex container */
+  .mining-plans .row {
+    display: contents; /* Treat children as direct children of .mining-plans */
+  }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Initialize modals
+    $('#upgradeModal').modal();
+    $('#miningModal').modal();
+
+    // Mining details from server
+    const miningDetails = <%- JSON.stringify(miningDetails) %>;
+    const prices = <%- JSON.stringify(prices) %>;
+
+    // Toggle Trading/Mining Plans
+    $('.trading-plans-btn').click(function () {
+      $('.trading-plans').show();
+      $('.mining-plans').hide();
+    });
+
+    $('.mining-plans-btn').click(function () {
+      $('.trading-plans').hide();
+      $('.mining-plans').show();
+    });
+
+    // Handle Upgrade BUY button
+    $('.buy-btn').click(function () {
+      const userBalance = <%= user.balance || 0 %>;
+      const userId = '<%= user._id %>';
+      const plan = $(this).data('plan');
+      const minAmount = parseFloat($(this).data('min'));
+      const maxAmount = parseFloat($(this).data('max'));
+
+      if (userBalance === 0) {
+        window.location.href = `/deposit/${userId}`;
+        return;
+      }
+
+      $('#modalPlanName').text(`${plan} Upgrade`);
+      $('#planInput').val(plan);
+      $('#upgradeModal').modal('open');
+    });
+
+    // Handle Mining BUY button
+    $('.mine-btn').click(function () {
+      const userBalance = <%= user.balance || 0 %>;
+      const userId = '<%= user._id %>';
+      const coin = $(this).data('coin');
+      const minAmount = parseFloat($(this).data('min'));
+      const maxAmount = parseFloat($(this).data('max'));
+
+      if (userBalance === 0) {
+        window.location.href = `/deposit/${userId}`;
+        return;
+      }
+
+      $('#modalCoinName').text(`${coin} Mining`);
+      $('#coinInput').val(coin);
+      $('#miningModal').modal('open');
+
+      // Reset total profit
+      $('#totalProfit').val('');
+    });
+
+    // Calculate total profit dynamically
+    $('#miningAmount').on('input', function () {
+      const amount = parseFloat($(this).val());
+      const coin = $('#coinInput').val();
+      if (!coin || isNaN(amount)) {
+        $('#totalProfit').val('');
+        return;
+      }
+
+      // Map coin to prices key
+      const priceKey = {
+        Bitcoin: 'BTC',
+        Ethereum: 'ETH',
+        BNB: 'BNB',
+        Doge: 'DOGE',
+        Atom: 'ATOM'
+      }[coin];
+
+      const coinDetails = miningDetails[coin];
+      const coinPrice = prices[priceKey];
+
+      // Validate inputs
+      if (!coinDetails || !coinPrice || !coinDetails.min || !coinDetails.baseProfit) {
+        console.error('Invalid inputs:', { coin, coinDetails, coinPrice, prices, miningDetails });
+        $('#totalProfit').val('');
+        return;
+      }
+
+      const minInvestment = coinDetails.min;
+      const baseProfit = coinDetails.baseProfit;
+
+      // Calculate total profit
+      const amountInCoin = amount / coinPrice;
+      const profitFactor = amountInCoin / (minInvestment / coinPrice);
+      const totalProfit = baseProfit * profitFactor;
+
+      console.log('Profit calculation:', { amount, coin, coinPrice, amountInCoin, profitFactor, totalProfit });
+
+      // Format profit (use toFixed(0) for Doge and Atom, toFixed(4) for others)
+      const profitFormatted = coin === 'Doge' || coin === 'Atom' ? totalProfit.toFixed(0) : totalProfit.toFixed(4);
+      const profitUSD = (totalProfit * coinPrice).toFixed(2);
+
+      $('#totalProfit').val(`${profitFormatted} ${coin} ($${profitUSD})`);
+    });
+
+    // Handle Upgrade Form Submission
+    $('#upgradeForm').submit(function (e) {
+      e.preventDefault();
+      $('#formError').hide();
+
+      const formData = new FormData(this);
+      const plan = formData.get('Plan');
+      const amount = parseFloat(formData.get('amount'));
+      const accountType = formData.get('accountType');
+      const minAmount = $('.buy-btn[data-plan="' + plan + '"]').data('min');
+      const maxAmount = $('.buy-btn[data-plan="' + plan + '"]').data('max');
+
+      if (amount < minAmount || amount > maxAmount) {
+        $('#formError').text(`Amount must be between $${minAmount} and $${maxAmount} for ${plan}.`).show();
+        return;
+      }
+
+      $.ajax({
+        url: `/accountUpgrade/<%= user._id %>`,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          M.toast({ html: 'Upgrade request submitted successfully!', classes: 'green' });
+          $('#upgradeModal').modal('close');
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 2000);
+        },
+        error: function (xhr) {
+          let errorMsg = 'An error occurred during submission';
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMsg = xhr.responseJSON.error;
+          }
+          $('#formError').text(errorMsg).show();
+        }
+      });
+    });
+
+    // Handle Mining Form Submission
+    $('#miningForm').submit(function (e) {
+      e.preventDefault();
+      $('#miningFormError').hide();
+
+      const formData = new FormData(this);
+      const coin = formData.get('coin');
+      const amount = parseFloat(formData.get('amount'));
+      const accountType = formData.get('accountType');
+      const minAmount = $('.mine-btn[data-coin="' + coin + '"]').data('min');
+      const maxAmount = $('.mine-btn[data-coin="' + coin + '"]').data('max');
+
+      if (amount < minAmount || amount > maxAmount) {
+        $('#miningFormError').text(`Amount must be between $${minAmount} and $${maxAmount} for ${coin}.`).show();
+        return;
+      }
+
+      $.ajax({
+        url: `/miningRequest/<%= user._id %>`,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          M.toast({ html: 'Mining request submitted successfully!', classes: 'green' });
+          $('#miningModal').modal('close');
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 2000);
+        },
+        error: function (xhr) {
+          let errorMsg = 'An error occurred during submission';
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMsg = xhr.responseJSON.error;
+          }
+          $('#miningFormError').text(errorMsg).show();
+        }
+      });
+    });
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>

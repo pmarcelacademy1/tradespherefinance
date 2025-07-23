@@ -1,0 +1,440 @@
+<%- include('partials/header') %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Header Section -->
+      <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-dark">Editing: <%= user.fullname %></h1>
+        <div class="text-end">
+          <small><b>User ID:</b> <%= user._id %></small>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/adminRoute">Dashboard</a></li>
+          <li class="breadcrumb-item active" aria-current="page"><%= user.fullname %></li>
+        </ol>
+      </nav>
+
+      <!-- Edit Form -->
+      <form action="/editUser/<%= user._id %>?_method=PUT" method="POST" class="bg-light p-4 rounded shadow" enctype="application/x-www-form-urlencoded">
+        <!-- Error Display -->
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger" role="alert">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Personal Information -->
+        <h4 class="mb-3">Personal Information</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="first_name" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label for="last_name" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="<%= user.last_name %>" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="phone" name="phone" value="<%= user.phone %>" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="gender" class="form-label">Gender</label>
+            <select class="form-select" id="gender" name="gender" readonly>
+              <option value="Male" <%= user.gender === 'Male' ? 'selected' : '' %>>Male</option>
+              <option value="Female" <%= user.gender === 'Female' ? 'selected' : '' %>>Female</option>
+              <option value="Other" <%= user.gender === 'Other' ? 'selected' : '' %>>Other</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" class="form-control" id="country" name="country" value="<%= user.country %>" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state" name="state" value="<%= user.state %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" value="<%= user.city %>" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="zip_code" class="form-label">Zip Code</label>
+            <input type="text" class="form-control" id="zip_code" name="zip_code" value="<%= user.zip_code %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" name="address" value="<%= user.address %>" readonly>
+          </div>
+        </div>
+
+        <!-- Account Information -->
+        <h4 class="mb-3">Account Information</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="currency" class="form-label">Currency</label>
+            <input type="text" class="form-control" id="currency" name="currency" value="<%= user.currency %>">
+          </div>
+          <div class="col-md-6">
+            <label for="balance" class="form-label">Balance</label>
+            <input type="number" step="0.01" class="form-control" id="balance" name="balance" value="<%= user.balance %>">
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="available" class="form-label">Available Balance</label>
+            <input type="text" class="form-control" id="available" name="available" value="<%= user.available %>">
+          </div>
+          <div class="col-md-6">
+            <label for="widthdrawBalance" class="form-label">Withdraw Balance</label>
+            <input type="text" class="form-control" id="widthdrawBalance" name="widthdrawBalance" value="<%= user.widthdrawBalance %>">
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="bonus" class="form-label">Bonus</label>
+            <input type="text" class="form-control" id="bonus" name="bonus" value="<%= user.bonus %>">
+          </div>
+          <div class="col-md-6">
+            <label for="profit" class="form-label">Profit</label>
+            <input type="text" class="form-control" id="profit" name="profit" value="<%= user.profit %>">
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="totalDeposit" class="form-label">Total Deposit</label>
+            <input type="text" class="form-control" id="totalDeposit" name="totalDeposit" value="<%= user.totalDeposit %>">
+          </div>
+          <div class="col-md-6">
+            <label for="totalWidthdraw" class="form-label">Total Withdraw</label>
+            <input type="text" class="form-control" id="totalWidthdraw" name="totalWidthdraw" value="<%= user.totalWidthdraw %>">
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="prog" class="form-label">Progress</label>
+            <input type="number" class="form-control" id="prog" name="prog" value="<%= user.prog %>">
+          </div>
+        </div>
+
+        <!-- Crypto Addresses -->
+        <h4 class="mb-3">Crypto Addresses</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="btc_add" class="form-label">BTC Address</label>
+            <input type="text" class="form-control" id="btc_add" name="btc_add" value="<%= user.btc_add %>">
+          </div>
+          <div class="col-md-6">
+            <label for="eth_add" class="form-label">ETH Address</label>
+            <input type="text" class="form-control" id="eth_add" name="eth_add" value="<%= user.eth_add %>">
+          </div>
+          <div class="col-md-6">
+            <label for="xrp_add" class="form-label">XRP Address</label>
+            <input type="text" class="form-control" id="xrp_add" name="xrp_add" value="<%= user.xrp_add %>">
+          </div>
+          <div class="col-md-6">
+            <label for="rune_add" class="form-label">Rune Address</label>
+            <input type="text" class="form-control" id="rune_add" name="rune_add" value="<%= user.rune_add %>">
+          </div>
+          <div class="col-md-6">
+            <label for="xlm_add" class="form-label">XLM Address</label>
+            <input type="text" class="form-control" id="xlm_add" name="xlm_add" value="<%= user.xlm_add %>">
+          </div>
+          <div class="col-md-6">
+            <label for="doge_add" class="form-label">Doge Address</label>
+            <input type="text" class="form-control" id="doge_add" name="doge_add" value="<%= user.doge_add %>">
+          </div>
+          <div class="col-md-6">
+            <label for="sol_add" class="form-label">Sol Address</label>
+            <input type="text" class="form-control" id="sol_add" name="sol_add" value="<%= user.sol_add %>">
+          </div>
+          <div class="col-md-6">
+            <label for="usdt_add" class="form-label">USDT Address</label>
+            <input type="text" class="form-control" id="usdt_add" name="usdt_add" value="<%= user.usdt_add %>">
+          </div>
+        </div>
+
+        <!-- Verification & Status -->
+        <h4 class="mb-3">Verification & Status</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="isVerified" class="form-label">Email Verified</label>
+            <select class="form-select" id="isVerified" name="isVerified" required>
+              <option value="true" <%= user.isVerified ? 'selected' : '' %>>Yes</option>
+              <option value="false" <%= !user.isVerified ? 'selected' : '' %>>No</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="kycVerified" class="form-label">KYC Verified</label>
+            <select class="form-select" id="kycVerified" name="kycVerified" required>
+              <option value="true" <%= user.kycVerified ? 'selected' : '' %>>Yes</option>
+              <option value="false" <%= !user.kycVerified ? 'selected' : '' %>>No</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="verifiedStatus" class="form-label">Verification Status</label>
+            <input type="text" class="form-control" id="verifiedStatus" name="verifiedStatus" value="<%= user.verifiedStatus %>" required>
+          </div>
+          <div class="col-md-6">
+            <label for="isSuspended" class="form-label">Is Suspended</label>
+            <select class="form-select" id="isSuspended" name="isSuspended" required>
+              <option value="true" <%= user.isSuspended ? 'selected' : '' %>>Yes</option>
+              <option value="false" <%= !user.isSuspended ? 'selected' : '' %>>No</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" name="role" required>
+              <option value="0" <%= user.role === 0 ? 'selected' : '' %>>User</option>
+              <option value="1" <%= user.role === 1 ? 'selected' : '' %>>Admin</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Security -->
+        <h4 class="mb-3">Security</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="security_question" class="form-label">Security Question</label>
+            <input type="text" class="form-control" id="security_question" name="security_question" value="<%= user.security_question %>" required>
+          </div>
+          <div class="col-md-6">
+            <label for="session" class="form-label">Trade Sessions</label>
+            <input type="text" class="form-control" id="session" name="session" value="<%= user.session %>" required>
+          </div>
+        </div>
+
+        <!-- Announcement Settings -->
+        <h4 class="mb-3">Announcement Settings</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="annLink" class="form-label">Announcement Link</label>
+            <input type="text" class="form-control" id="annLink" name="annLink" value="<%= user.annLink || 'settings_page' %>">
+          </div>
+          <div class="col-md-6">
+            <label for="annText" class="form-label">Announcement Text</label>
+            <input type="text" class="form-control" id="annText" name="annText" value="<%= user.annText || 'Please verify your identity by uploading a valid government-issued identification card' %>">
+          </div>
+        </div>
+
+        <!-- Account Types -->
+        <h4 class="mb-3">Account Types</h4>
+        <div id="accountTypesContainer" class="mb-3">
+          <% user.accountTypes.forEach((type, index) => { %>
+            <div class="row mb-2 account-type-row">
+              <div class="col-md-5">
+                <label for="accountTypes[<%= index %>][name]" class="form-label">Account Name</label>
+                <input type="text" class="form-control" name="accountTypes[<%= index %>][name]" value="<%= type.name %>" required>
+              </div>
+              <div class="col-md-5">
+                <label for="accountTypes[<%= index %>][minDeposit]" class="form-label">Min Deposit</label>
+                <input type="number" step="0.01" min="0" class="form-control" name="accountTypes[<%= index %>][minDeposit]" value="<%= type.minDeposit %>" required>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-danger btn-sm remove-account-type">Remove</button>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+        <button type="button" class="btn btn-secondary mb-3" id="addAccountType">Add Account Type</button>
+
+        <!-- Non-Editable Array Fields (Display Only) -->
+        <h4 class="mb-3">Activity (Non-Editable)</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Deposits</label>
+            <input type="text" class="form-control" value="<%= user.deposits.length %> deposit(s)" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Withdrawals</label>
+            <input type="text" class="form-control" value="<%= user.widthdraws.length %> withdrawal(s)" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Upgrades</label>
+            <input type="text" class="form-control" value="<%= user.upgrades.length %> upgrade(s)" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Live Trades</label>
+            <input type="text" class="form-control" value="<%= user.livetrades.length %> trade(s)" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Copy Trades</label>
+            <input type="text" class="form-control" value="<%= user.copyTrades.length %> trade(s)" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Minings</label>
+            <input type="text" class="form-control" value="<%= user.minings.length %> mining(s)" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Verifications</label>
+            <input type="text" class="form-control" value="<%= user.verified.length %> verification(s)" readonly>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-primary">Update User</button>
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" id="deleteButton" data-bs-target="#deleteModal">Delete User</button>
+        </div>
+      </form>
+
+      <!-- OTP Generation Section -->
+      <div class="mt-4 p-3 bg-dark text-white rounded">
+        <label class="form-label">Generate OTP for Withdrawal</label>
+        <div class="d-flex gap-2">
+          <input type="text" id="otpDisplay" class="form-control bg-secondary text-white" readonly>
+          <button id="generateOtpBtn" class="btn btn-primary">Generate OTP</button>
+        </div>
+        <p id="otpMessage" class="mt-2"></p>
+      </div>
+
+      <!-- Delete Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Confirm User Deletion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>This will remove the user record of <b><%= user.fullname %></b>.<br>Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form action="/deleteUser/<%= user._id %>?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-primary">Yes, Remove User</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // OTP Generation
+  const userId = '<%= user._id %>';
+  document.getElementById('generateOtpBtn').addEventListener('click', async () => {
+    try {
+      const response = await fetch(`/generateOTP/${userId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (data.otp) {
+        document.getElementById('otpDisplay').value = data.otp;
+        document.getElementById('otpMessage').textContent = 'OTP generated successfully. Valid for 24 hours.';
+        document.getElementById('otpDisplay').addEventListener('click', () => {
+          navigator.clipboard.writeText(data.otp);
+          document.getElementById('otpMessage').textContent = 'OTP copied to clipboard!';
+        });
+      } else {
+        document.getElementById('otpMessage').textContent = 'Error: ' + data.error;
+      }
+    } catch (error) {
+      document.getElementById('otpMessage').textContent = 'Error generating OTP';
+      console.error(error);
+    }
+  });
+
+  // Dynamic Account Types
+  let accountTypeIndex = <%= user.accountTypes.length %>;
+  document.getElementById('addAccountType').addEventListener('click', () => {
+    const container = document.getElementById('accountTypesContainer');
+    const newRow = document.createElement('div');
+    newRow.className = 'row mb-2 account-type-row';
+    newRow.innerHTML = `
+      <div class="col-md-5">
+        <label for="accountTypes[${accountTypeIndex}][name]" class="form-label">Account Name</label>
+        <input type="text" class="form-control" name="accountTypes[${accountTypeIndex}][name]" required>
+      </div>
+      <div class="col-md-5">
+        <label for="accountTypes[${accountTypeIndex}][minDeposit]" class="form-label">Min Deposit</label>
+        <input type="number" step="0.01" min="0" class="form-control" name="accountTypes[${accountTypeIndex}][minDeposit]" required>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="button" class="btn btn-danger btn-sm remove-account-type">Remove</button>
+      </div>
+    `;
+    container.appendChild(newRow);
+    accountTypeIndex++;
+    attachRemoveListeners();
+  });
+
+  function attachRemoveListeners() {
+    document.querySelectorAll('.remove-account-type').forEach(button => {
+      button.addEventListener('click', () => {
+        button.closest('.account-type-row').remove();
+      });
+    });
+  }
+  attachRemoveListeners();
+
+  // Prevent form submission with invalid accountTypes
+  document.querySelector('form').addEventListener('submit', (e) => {
+    const accountTypeRows = document.querySelectorAll('.account-type-row');
+    let valid = true;
+    accountTypeRows.forEach(row => {
+      const nameInput = row.querySelector('input[name$="[name]"]');
+      const minDepositInput = row.querySelector('input[name$="[minDeposit]"]');
+      // Validate name
+      if (!nameInput.value.trim()) {
+        valid = false;
+        nameInput.classList.add('is-invalid');
+      } else {
+        nameInput.classList.remove('is-invalid');
+      }
+      // Validate minDeposit
+      const minDepositValue = minDepositInput.value.trim();
+      if (!minDepositValue || isNaN(minDepositValue) || parseFloat(minDepositValue) < 0) {
+        valid = false;
+        minDepositInput.classList.add('is-invalid');
+      } else {
+        minDepositInput.classList.remove('is-invalid');
+      }
+    });
+    if (!valid) {
+      e.preventDefault();
+      alert('Please fill in all account type names and valid minimum deposits (non-negative numbers) or remove empty entries.');
+    }
+  });
+</script>
+
+<style>
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  .is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  }
+</style>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,136 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <section class="row center">
+      <div class="col l4 s12 offset-l4">
+        <p id="withdrawTitle">Withdraw to Cryptocurrency</p>
+        <div class="card-panel">
+          <!-- Display Flash Messages -->
+          <% if (messages.error) { %>
+            <div style="background-color: #ffebee; color: #c62828; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+              <%= messages.error %>
+            </div>
+          <% } %>
+          <% if (messages.success) { %>
+            <div style="background-color: #e8f5e9; color: #2e7d32; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+              <%= messages.success %>
+            </div>
+          <% } %>
+
+          <form id="withdrawForm" action="/withdraw/<%= user._id %>" method="POST">
+            <div class="row">
+              <div class="input-field col l6 s12">
+                <div class="input-field col l6 s12">
+                  <label class="active">From</label>
+                  <select id="from" name="accountType" class="browser-default undefined" required>
+                    <% if (user.accountTypes && user.accountTypes.length > 0) { %>
+                      <% user.accountTypes.forEach(account => { %>
+                        <option value="<%= account.name %>" <%= account.name === 'Trading Account' ? 'selected' : '' %>>
+                          <%= account.name %> ($<%= account.minDeposit.toFixed(2) %>)
+                        </option>
+                      <% }) %>
+                    <% } else { %>
+                      <option value="" disabled selected>No account types available</option>
+                    <% } %>
+                  </select>
+                </div>
+                </div>
+              </div>
+              <div class="col l6 s12">
+                <div class="input-field">
+                  <span class="prefix">USD</span>
+                  <label for="amount">Amount</label>
+                  <input type="number" name="amount" required step="0.01" min="0.01" id="amount" inputmode="decimal">
+                </div>
+              </div>
+              <div class="col l6 s12">
+                <div class="input-field">
+                  <label class="active">Cryptocurrency</label>
+                  <select id="crypto_currency" name="crypto_currency" class="browser-default undefined" required>
+                    <option value="Bitcoin Wallet" selected>Bitcoin BTC</option>
+                    <option value="Tether Wallet">Tether USDT</option>
+                    <option value="Ethereum Wallet">Ethereum ETH</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col l6 s12">
+                <div class="input-field">
+                  <label for="wallet_address">Wallet Address</label>
+                  <input type="text" name="wallet_address" maxlength="300" required id="wallet_address" inputmode="text">
+                </div>
+              </div>
+              <div class="col l6 s12">
+                <div class="input-field">
+                  <label for="otp">OTP Code</label>
+                  <input type="number" name="otp" required id="otp" inputmode="numeric">
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name="type" id="withdrawType" value="Cryptocurrency">
+            <input type="hidden" name="narration" value="Cryptocurrency Withdrawal">
+            <div>
+              <button type="submit" class="newbtn">Submit</button>
+            </div>
+          </form>
+          <span class="error-message" id="formError" style="color: red; font-size: 14px; display: none;"></span>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  jQuery(document).ready(function ($) {
+    // Display withdrawal method from localStorage
+    const withdrawMethod = localStorage.getItem('withdrawMethod') || 'Cryptocurrency';
+    $('#withdrawTitle').text(`Withdraw to ${withdrawMethod}`);
+    $('#withdrawType').val(withdrawMethod);
+    console.log(`Withdrawal method from localStorage: ${withdrawMethod}`); // Debug
+
+    // Client-side form submission with AJAX
+    $('#withdrawForm').on('submit', function (e) {
+      e.preventDefault();
+      const errorMessage = $('#formError');
+      errorMessage.css('display', 'none');
+
+      // Client-side validation
+      const amount = parseFloat($('#amount').val());
+      if (isNaN(amount) || amount <= 0) {
+        errorMessage.text('Please enter a valid amount').css('display', 'block');
+        console.log('Validation failed: Invalid amount'); // Debug
+        return;
+      }
+
+      const formData = new FormData(this);
+      console.log('Submitting form with data:', Object.fromEntries(formData)); // Debug
+
+      $.ajax({
+        url: '/withdraw/<%= user._id %>',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response, textStatus, xhr) {
+          console.log('Form submission successful:', xhr.status); // Debug
+          // Clear localStorage
+          localStorage.removeItem('withdrawMethod');
+          console.log('localStorage.withdrawMethod cleared'); // Debug
+          // Redirect to withdrawHistory
+          window.location.href = '/withdrawHistory/<%=user._id%>';
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.error('Form submission failed:', xhr.responseText, xhr.status); // Debug
+          let errorMsg = 'An error occurred during submission';
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMsg = xhr.responseJSON.error;
+          }
+          errorMessage.text(errorMsg).css('display', 'block');
+        }
+      });
+    });
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>

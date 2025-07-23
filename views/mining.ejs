@@ -1,0 +1,170 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <section class="pc-container" style="margin: auto;"><br>
+      <div class="row">
+        <div class="col l4 s12">
+          <ul class="collection">
+            <li class="collection-item dashboard-mining app-image-gradient white-text app-px-1"><br>
+              <h2 class="white-text" style="margin: 0px; font-size: 35px;"><%= user.currency %><%= user.balance %></h2><br><br><br>
+            </li>
+          </ul>
+          <div class="row center">
+            <a class="newbtn" href="/account_types/<%= user._id %>" style="display:inline-block;">BUY CONTRACT</a>
+            <a class="newbtn" href="/miningHistory/<%= user._id %>" style="display:inline-block;">MY CONTRACTS</a>
+            <div class="col l6 s6" style="padding-right: 0px;"><br></div>
+            <div class="col l6 s6" style="padding-left: 0px;"></div>
+          </div>
+          <br>
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <div id="tradingview_3e2"></div>
+            <div class="tradingview-widget-copyright"></div>
+            <div style="height: 150px; margin-bottom: 5px;">
+              <div style="width: 100%; height: 100%;">
+                <style>
+                  .tradingview-widget-copyright {
+                    font-size: 13px !important;
+                    line-height: 32px !important;
+                    text-align: center !important;
+                    vertical-align: middle !important;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+                    color: #9db2bd !important;
+                  }
+                  .tradingview-widget-copyright .blue-text {
+                    color: #2962FF !important;
+                  }
+                  .tradingview-widget-copyright a {
+                    text-decoration: none !important;
+                    color: #9db2bd !important;
+                  }
+                  .tradingview-widget-copyright a:visited {
+                    color: #9db2bd !important;
+                  }
+                  .tradingview-widget-copyright a:hover .blue-text {
+                    color: #1E53E5 !important;
+                  }
+                  .tradingview-widget-copyright a:active .blue-text {
+                    color: #1848CC !important;
+                  }
+                  .tradingview-widget-copyright a:visited .blue-text {
+                    color: #2962FF !important;
+                  }
+                </style>
+                <iframe scrolling="no" allowtransparency="true" frameborder="0" src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22BTCUSD%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22dateRange%22%3A%221d%22%2C%22colorTheme%22%3A%22light%22%2C%22isTransparent%22%3Afalse%2C%22autosize%22%3Atrue%2C%22largeChartUrl%22%3A%22%22%2C%22utm_source%22%3A%22globalcfdmarket.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22mini-symbol-overview%22%2C%22page-uri%22%3A%22globalcfdmarket.com%2Fuser%2Findex.html%3Fcurrent%3Dmining%22%7D" style="box-sizing: border-box; display: block; height: 100%; width: 100%;"></iframe>
+              </div>
+            </div>
+          </div>
+          <div class="hide-on-med-and-down">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <div id="tradingview_3e2"></div>
+              <div class="tradingview-widget-copyright"></div>
+              <div style="height: 150px; margin-bottom: 5px;">
+                <div style="width: 100%; height: 100%;">
+                  <style>
+                    .tradingview-widget-copyright {
+                      font-size: 13px !important;
+                      line-height: 32px !important;
+                      text-align: center !important;
+                      vertical-align: middle !important;
+                      font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+                      color: #9db2bd !important;
+                    }
+                    .tradingview-widget-copyright .blue-text {
+                      color: #2962FF !important;
+                    }
+                    .tradingview-widget-copyright a {
+                      text-decoration: none !important;
+                      color: #9db2bd !important;
+                    }
+                    .tradingview-widget-copyright a:visited {
+                      color: #9db2bd !important;
+                    }
+                    .tradingview-widget-copyright a:hover .blue-text {
+                      color: #1E53E5 !important;
+                    }
+                    .tradingview-widget-copyright a:active .blue-text {
+                      color: #1848CC !important;
+                    }
+                    .tradingview-widget-copyright a:visited .blue-text {
+                      color: #2962FF !important;
+                    }
+                  </style>
+                  <iframe scrolling="no" allowtransparency="true" frameborder="0" src="https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#%7B%22symbol%22%3A%22ETHUSD%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22dateRange%22%3A%221d%22%2C%22colorTheme%22%3A%22light%22%2C%22isTransparent%22%3Afalse%2C%22autosize%22%3Atrue%2C%22largeChartUrl%22%3A%22%22%2C%22utm_source%22%3A%22globalcfdmarket.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22mini-symbol-overview%22%2C%22page-uri%22%3A%22globalcfdmarket.com%2Fuser%2Findex.html%3Fcurrent%3Dmining%22%7D" style="box-sizing: border-box; display: block; height: 100%; width: 100%;"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col l8 s12">
+          <ul class="collection">
+            <li class="collection-item bg" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+              <div class="row">
+                <div class="col l1 center">
+                  <img src="/static/account/assets/images/icons/pair-icon-btcusd.img.svg" style="max-height: 40px; border-radius: 10px;">
+                </div>
+                <div class="col l9 s6">
+                  <%= coinBalances && coinBalances.BTC ? coinBalances.BTC.toFixed(6) : '0.000000' %> BTC<br>
+                  <span class="grey-text">$<%= coinBalances && prices && coinBalances.BTC ? (coinBalances.BTC * prices.BTC).toFixed(2) : '0.00' %></span>
+                </div>
+                <div class="col l2"><span class="grey-text"></span><br></div>
+              </div>
+            </li>
+            <li class="collection-item bg" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+              <div class="row">
+                <div class="col l1 center">
+                  <img src="/static/account/assets/images/icons/pair-icon-ethusd.img.svg" style="max-height: 40px; border-radius: 10px;">
+                </div>
+                <div class="col l9 s6">
+                  <%= coinBalances && coinBalances.ETH ? coinBalances.ETH.toFixed(6) : '0.000000' %> ETH<br>
+                  <span class="grey-text">$<%= coinBalances && prices && coinBalances.ETH ? (coinBalances.ETH * prices.ETH).toFixed(2) : '0.00' %></span>
+                </div>
+                <div class="col l2"><span class="grey-text"></span><br></div>
+              </div>
+            </li>
+            <li class="collection-item bg" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+              <div class="row">
+                <div class="col l1 center">
+                  <img src="/static/account/assets/images/icons/pair-icon-bnbusd.img.svg" style="max-height: 40px; border-radius: 10px;">
+                </div>
+                <div class="col l9 s6">
+                  <%= coinBalances && coinBalances.BNB ? coinBalances.BNB.toFixed(6) : '0.000000' %> BNB<br>
+                  <span class="grey-text">$<%= coinBalances && prices && coinBalances.BNB ? (coinBalances.BNB * prices.BNB).toFixed(2) : '0.00' %></span>
+                </div>
+                <div class="col l2"><span class="grey-text"></span><br></div>
+              </div>
+            </li>
+            <li class="collection-item bg" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+              <div class="row">
+                <div class="col l1 center">
+                  <img src="/static/account/assets/images/icons/doge.svg" style="max-height: 40px; border-radius: 10px;">
+                </div>
+                <div class="col l9 s6">
+                  <%= coinBalances && coinBalances.DOGE ? coinBalances.DOGE.toFixed(6) : '0.000000' %> DOGE<br>
+                  <span class="grey-text">$<%= coinBalances && prices && coinBalances.DOGE ? (coinBalances.DOGE * prices.DOGE).toFixed(2) : '0.00' %></span>
+                </div>
+                <div class="col l2"><span class="grey-text"></span><br></div>
+              </div>
+            </li>
+            <li class="collection-item bg" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+              <div class="row">
+                <div class="col l1 center">
+                  <img src="/static/account/assets/images/icons/pair-icon-atomusd.img.svg" style="max-height: 40px; border-radius: 10px;">
+                </div>
+                <div class="col l9 s6">
+                  <%= coinBalances && coinBalances.ATOM ? coinBalances.ATOM.toFixed(6) : '0.000000' %> ATOM<br>
+                  <span class="grey-text">$<%= coinBalances && prices && coinBalances.ATOM ? (coinBalances.ATOM * prices.ATOM).toFixed(2) : '0.00' %></span>
+                </div>
+                <div class="col l2"><span class="grey-text"></span><br></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<%- include('partials/dynaFooter')%>

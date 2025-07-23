@@ -1,0 +1,188 @@
+<%- include('partials/header') %>
+
+<div class="container text-white" style="min-height: 100vh; background-color: #212529;">
+  <!-- Flash Messages -->
+  <% if (messages.error) { %>
+    <div class="row">
+      <div class="col s12">
+        <div class="card red darken-1">
+          <div class="card-content white-text">
+            <span class="card-title">Error</span>
+            <p><%= messages.error %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Copy Trade Details</h1>
+    <div class="text-end">
+      <small><b>Copy Trade ID:</b> <%= copyTrade._id %></small><br>
+      <small><b>Last Updated:</b> <%= new Date(copyTrade.updatedAt).toLocaleString() %></small>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-dark text-white">
+      <li class="breadcrumb-item"><a href="/adminRoute" class="text-white">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="/all-copytrades" class="text-white">All Copy Trades</a></li>
+      <li class="breadcrumb-item active text-white" aria-current="page">
+        <%= copyTrade.owner ? `${copyTrade.owner.first_name} ${copyTrade.owner.last_name}` : 'Unknown User' %>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Copy Trade Details -->
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Copy Trade Information</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Trader Name:</b></div>
+              <div class="col-8"><%= copyTrade.traderName %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Profit Share:</b></div>
+              <div class="col-8"><%= copyTrade.profitShare.toFixed(2) %>%</div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Win Rate:</b></div>
+              <div class="col-8"><%= copyTrade.winRate.toFixed(2) %>%</div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Amount:</b></div>
+              <div class="col-8">$<%= copyTrade.amount.toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Account Type:</b></div>
+              <div class="col-8"><%= copyTrade.accountType %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Duration:</b></div>
+              <div class="col-8"><%= copyTrade.duration %> days</div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Status:</b></div>
+              <div class="col-8">
+                <span class="<%= copyTrade.status === 'active' ? 'green-text' : 'blue-text' %>">
+                  <%= copyTrade.status.charAt(0).toUpperCase() + copyTrade.status.slice(1) %>
+                </span>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Owner:</b></div>
+              <div class="col-8">
+                <%= copyTrade.owner ? `${copyTrade.owner.first_name} ${copyTrade.owner.last_name} (${copyTrade.owner.email})` : 'Unknown User' %>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Timestamps & Metrics</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Start Date:</b></div>
+              <div class="col-8"><%= new Date(copyTrade.startDate).toLocaleString() %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>End Date:</b></div>
+              <div class="col-8"><%= copyTrade.endDate ? new Date(copyTrade.endDate).toLocaleString() : 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Current Profit:</b></div>
+              <div class="col-8">$<%= copyTrade.currentProfit.toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Created At:</b></div>
+              <div class="col-8"><%= new Date(copyTrade.createdAt).toLocaleString() %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Updated At:</b></div>
+              <div class="col-8"><%= new Date(copyTrade.updatedAt).toLocaleString() %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="row">
+    <div class="col s12">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-content">
+          <div class="d-flex flex-row gap-2">
+            <a href="/editCopyTrade/<%= copyTrade._id %>" class="btn" style="background-color:#ffc107;">
+              <i class="material-icons left">edit</i>Edit Copy Trade
+            </a>
+            <form action="/deleteCopyTrade/<%= copyTrade._id %>?_method=DELETE" method="POST">
+              <button type="submit" class="btn red">
+                <i class="material-icons left">delete</i>Delete Copy Trade
+              </button>
+            </form>
+            <a href="/all-copytrades" class="btn grey">
+              <i class="material-icons left">arrow_back</i>Back to Copy Trades
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .d-flex {
+    display: flex;
+  }
+  .flex-row {
+    flex-direction: row;
+  }
+  .gap-2 {
+    gap: 10px;
+  }
+  .breadcrumb {
+    background-color: #212529 !important;
+  }
+  .green-text {
+    color: #4caf50 !important;
+    font-weight: bold;
+  }
+  .blue-text {
+    color: #2196f3 !important;
+    font-weight: bold;
+  }
+</style>
+
+<%- include('partials/footer') %>

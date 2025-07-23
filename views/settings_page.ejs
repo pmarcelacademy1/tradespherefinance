@@ -1,0 +1,29 @@
+<%- include('partials/dashboardHeader')%>
+
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <div class="row">
+      <div class="col l6 s12 offset-l3">
+        <ul class="collection">
+          <a class="collection-item bg" href="/profile_view">
+            <li>
+              <div style="padding: 1rem 1rem 0.8rem; background: rgb(50, 167, 226); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">person</span></div>My Profile</li></a>
+                
+                
+                    
+                    <a class="collection-item bg" href="/update_address/<%=user._id%>">
+                      <li><div style="padding: 1rem 1rem 0.8rem; background: rgb(34, 176, 125); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                        <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">home</span></div>Update Address</li></a>
+                        <a class="collection-item bg" href="/account_verification/<%=user._id%>">
+                          <li><div style="padding: 1rem 1rem 0.8rem; background: rgb(82, 82, 152); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                            <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">verified_user</span></div>Account Verifications</li></a>
+                          </ul></div></div></div>
+                        </main>
+                      </div>
+
+
+
+
+                      <%- include('partials/dashboardFooter')%>

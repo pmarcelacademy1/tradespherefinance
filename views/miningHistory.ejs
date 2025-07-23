@@ -1,0 +1,242 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="container" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <br>
+    <center>
+      <a href="/account_types/<%= user._id %>" class="btn btn-large" style="background-color:#286090;">BACK TO PLANS</a>
+    </center>
+
+    <!-- Flash Messages -->
+    <% if (messages.error && messages.error.length > 0) { %>
+      <div style="background-color: #ffebee; color: #c62828; padding: 15px; margin: 20px; border-radius: 4px;">
+        <%= messages.error %>
+      </div>
+    <% } %>
+    <% if (messages.success && messages.success.length > 0) { %>
+      <div style="background-color: #e8f5e9; color: #2e7d32; padding: 15px; margin: 20px; border-radius: 4px;">
+        <%= messages.success %>
+      </div>
+    <% } %>
+
+    <!-- Filter Form -->
+    <div class="container">
+      <div class="card-panel">
+        <form id="filterForm" method="GET" action="/miningHistory/<%= user._id %>">
+          <div class="row">
+            <div class="input-field col l4 s12">
+              <select name="status" class="browser-default">
+                <option value="All" <%= filters.status === 'All' ? 'selected' : '' %>>All Statuses</option>
+                <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                <option value="approved" <%= filters.status === 'approved' ? 'selected' : '' %>>Approved</option>
+                <option value="rejected" <%= filters.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+              </select>
+              <label>Status</label>
+            </div>
+            <div class="input-field col l4 s12">
+              <input type="date" name="startDate" value="<%= filters.startDate %>" id="startDate">
+              <label for="startDate">Start Date</label>
+            </div>
+            <div class="input-field col l4 s12">
+              <input type="date" name="endDate" value="<%= filters.endDate %>" id="endDate">
+              <label for="endDate">End Date</label>
+            </div>
+          </div>
+          <div class="center">
+            <button type="submit" class="btn" style="background-color:#286090;">Apply Filters</button>
+            <a href="/miningHistory/<%= user._id %>" class="btn grey">Clear Filters</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Mining History Table -->
+    <center>
+      <p class="center">Mining History</p>
+    </center>
+    <div class="container">
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>Coin</th>
+                <th>Amount ($)</th>
+                <th>Profit (Coin)</th>
+                <th>Duration (Days)</th>
+                <th>Status</th>
+                <th>Image</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Daily Profit</th>
+              </tr>
+            </thead>
+            <tbody id="miningTableBody">
+              <% if (minings && minings.length > 0) { %>
+                <% minings.forEach(mining => { %>
+                  <tr data-mining-id="<%= mining._id %>">
+                    <td><%= mining.coin %></td>
+                    <td>$<%= mining.amount.toFixed(2) %></td>
+                    <td><%= mining.profit.toFixed(4) %> <%= mining.coin %></td>
+                    <td><%= mining.duration %></td>
+                    <td><%= mining.status %></td>
+                    <td>
+                      <% if (mining.image) { %>
+                        <a href="/IMG_UPLOADS/<%= mining.image %>" target="_blank">View Image</a>
+                      <% } else { %>
+                        N/A
+                      <% } %>
+                    </td>
+                    <td><%= mining.startDate ? new Date(mining.startDate).toLocaleDateString() : 'N/A' %></td>
+                    <td><%= mining.endDate ? new Date(mining.endDate).toLocaleDateString() : 'N/A' %></td>
+                    <td class="daily-profit" data-coin="<%= mining.coin %>" data-amount="<%= mining.amount %>">
+                      <%= mining.dailyProfit.toFixed(4) %> <%= mining.coin %>
+                      ($<%= (mining.dailyProfit * prices[mining.coin]).toFixed(2) %>)
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="9"><center>No mining requests found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <!-- Pagination -->
+      <% if (pagination.totalPages > 1) { %>
+        <div class="center">
+          <ul class="pagination">
+            <li class="<%= pagination.page === 1 ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.page > 1 ? `/miningHistory/${user._id}?page=${pagination.page - 1}&limit=${pagination.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_left</i>
+              </a>
+            </li>
+            <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+              <li class="<%= pagination.page === i ? 'active' : 'waves-effect' %>">
+                <a href="/miningHistory/<%= user._id %>?page=<%= i %>&limit=<%= pagination.limit %>&status=<%= filters.status %>&startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>">
+                  <%= i %>
+                </a>
+              </li>
+            <% } %>
+            <li class="<%= pagination.page === pagination.totalPages ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.page < pagination.totalPages ? `/miningHistory/${user._id}?page=${pagination.page + 1}&limit=${pagination.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_right</i>
+              </a>
+            </li>
+          </ul>
+          <p>Showing <%= (pagination.page - 1) * pagination.limit + 1 %> to <%= Math.min(pagination.page * pagination.limit, pagination.totalMinings) %> of <%= pagination.totalMinings %> mining requests</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Initialize Materialize components
+    $('select').formSelect();
+
+    // CoinGecko API URL
+    const coinGeckoUrl = 'https://api.coingecko.com/api/v3/simple/price';
+    const coins = ['bitcoin', 'ethereum', 'binancecoin', 'dogecoin', 'cosmos'];
+
+    // Mining details from server
+    const coinRanges = <%- JSON.stringify(coinRanges) %>;
+
+    // Client-side cache for prices
+    let priceCache = {
+      data: <%- JSON.stringify(prices) %>, // Initial prices from server
+      timestamp: Date.now(),
+      cacheDuration: 60000, // Cache for 60 seconds
+    };
+
+    // Function to update daily profits
+    function updateDailyProfits() {
+      const now = Date.now();
+
+      // Fetch new prices only if cache is expired
+      if (!priceCache.data || now - priceCache.timestamp >= priceCache.cacheDuration) {
+        $.ajax({
+          url: coinGeckoUrl,
+          data: {
+            ids: coins.join(','),
+            vs_currencies: 'usd',
+          },
+          success: function (data) {
+            priceCache.data = {
+              Bitcoin: data.bitcoin.usd,
+              Ethereum: data.ethereum.usd,
+              BNB: data.binancecoin.usd,
+              Doge: data.dogecoin.usd,
+              Atom: data.cosmos.usd,
+            };
+            priceCache.timestamp = now;
+            updateTable(priceCache.data);
+          },
+          error: function (xhr) {
+            if (xhr.status === 429) {
+              console.warn('CoinGecko rate limit hit on client-side');
+              // Use cached data or fallback
+              updateTable(priceCache.data || <%- JSON.stringify(prices) %>);
+            } else {
+              console.error('Failed to fetch live prices:', xhr.statusText);
+              updateTable(priceCache.data || <%- JSON.stringify(prices) %>);
+            }
+          },
+        });
+      } else {
+        // Use cached prices with slight fluctuation
+        const fluctuatedPrices = {};
+        for (const coin in priceCache.data) {
+          // Add random fluctuation of ±0.5% to simulate live changes
+          const fluctuation = priceCache.data[coin] * (Math.random() * 0.01 - 0.005);
+          fluctuatedPrices[coin] = priceCache.data[coin] + fluctuation;
+        }
+        updateTable(fluctuatedPrices);
+      }
+    }
+
+    // Function to update table with price data
+    function updateTable(prices) {
+      $('#miningTableBody tr').each(function () {
+        const $row = $(this);
+        const coin = $row.find('.daily-profit').data('coin');
+        const amount = parseFloat($row.find('.daily-profit').data('amount'));
+        if (!coin || !amount) return;
+
+        const coinPrice = prices[coin];
+        const minInvestment = coinRanges[coin].min;
+        const baseProfit = coinRanges[coin].baseProfit;
+        const duration = coinRanges[coin].duration;
+
+        // Calculate dynamic daily profit
+        const amountInCoin = amount / coinPrice;
+        const profitFactor = amountInCoin / (minInvestment / coinPrice);
+        const totalProfit = baseProfit * profitFactor;
+        let dailyProfit = totalProfit / duration;
+
+        // Add subtle random fluctuation to dailyProfit (±0.2%)
+        const fluctuation = dailyProfit * (Math.random() * 0.004 - 0.002);
+        dailyProfit += fluctuation;
+
+        // Update table cell
+        const dailyProfitText = `${dailyProfit.toFixed(4)} ${coin} ($${(
+          dailyProfit * coinPrice
+        ).toFixed(2)})`;
+        $row.find('.daily-profit').text(dailyProfitText);
+      });
+    }
+
+    // Initial update
+    updateDailyProfits();
+
+    // Update every 200 milliseconds (adjustable)
+    setInterval(updateDailyProfits, 500);
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>

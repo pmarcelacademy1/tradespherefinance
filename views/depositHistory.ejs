@@ -1,0 +1,235 @@
+<%- include('partials/dynaHeader') %>
+
+<div class=" alert-secondary custom-alert" role="alert">
+  <%= user.annText %> <a href="<%= user.annLink %>" class="alert-link btn btn-primary btn-sm">Click Now</a>
+</div>
+
+<style>
+.custom-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border: 1px solid #d1d3e2;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.custom-alert:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.alert-link.btn {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.alert-link.btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+  text-decoration: none;
+}
+
+.alert-link.btn:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .custom-alert {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .alert-link.btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
+
+<main class="container" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done"><br>
+    <center><a href="/deposit/<%= user._id %>" class="btn btn-large" style="background-color:#286090;">NEW DEPOSIT</a></center><br>
+    <div class="container">
+      <!-- Filter Dropdown -->
+      <div class="row">
+        <div class="col s12 m4">
+          <label for="statusFilter">Filter by Status</label>
+          <select id="statusFilter" class="browser-default">
+            <option value="all" <%= status === 'all' ? 'selected' : '' %>>All</option>
+            <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="completed" <%= status === 'completed' ? 'selected' : '' %>>Completed</option>
+            <option value="failed" <%= status === 'failed' ? 'selected' : '' %>>Failed</option>
+          </select>
+        </div>
+      </div>
+
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>
+                  <a href="?page=<%= page %>&sort=description&order=<%= sort === 'description' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Description
+                    <% if (sort === 'description') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=createdAt&order=<%= sort === 'createdAt' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Date
+                    <% if (sort === 'createdAt') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=amount&order=<%= sort === 'amount' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Amount
+                    <% if (sort === 'amount') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=accountType&order=<%= sort === 'accountType' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Deposited To
+                    <% if (sort === 'accountType') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=status&order=<%= sort === 'status' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Status
+                    <% if (sort === 'status') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>
+                  <a href="?page=<%= page %>&sort=txid&order=<%= sort === 'txid' && order === 'asc' ? 'desc' : 'asc' %>&status=<%= status %>">
+                    Transaction ID
+                    <% if (sort === 'txid') { %>
+                      <%= order === 'asc' ? '↑' : '↓' %>
+                    <% } %>
+                  </a>
+                </th>
+                <th>Proof of Payment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (deposits.length > 0) { %>
+                <% deposits.forEach(deposit => { %>
+                  <tr>
+                    <td><%= deposit.paymentMethod %> Deposit</td>
+                    <td><%= new Date(deposit.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></td>
+                    <td>$<%= parseFloat(deposit.amount).toFixed(2) %></td>
+                    <td><%= deposit.accountType %></td>
+                    <td>
+                      <span class="status-<%= deposit.status %>">
+                        <%= deposit.status.charAt(0).toUpperCase() + deposit.status.slice(1) %>
+                      </span>
+                    </td>
+                    <td><%= deposit.txid %></td>
+                    <td>
+                      <% if (deposit.image) { %>
+                        <a href="<%= deposit.image %>" target="_blank">View</a>
+                      <% } else { %>
+                        None
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="7"><center>No Record found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+
+      <!-- Pagination Controls -->
+      <% if (totalPages > 1) { %>
+        <ul class="pagination center">
+          <li class="<%= page === 1 ? 'disabled' : 'waves-effect' %>">
+            <a href="<%= page === 1 ? '#' : `?page=${page - 1}&sort=${sort}&order=${order}&status=${status}` %>">
+              <i class="material-icons">chevron_left</i>
+            </a>
+          </li>
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="<%= page === i ? 'active' : 'waves-effect' %>">
+              <a href="?page=<%= i %>&sort=<%= sort %>&order=<%= order %>&status=<%= status %>"><%= i %></a>
+            </li>
+          <% } %>
+          <li class="<%= page === totalPages ? 'disabled' : 'waves-effect' %>">
+            <a href="<%= page === totalPages ? '#' : `?page=${page + 1}&sort=${sort}&order=${order}&status=${status}` %>">
+              <i class="material-icons">chevron_right</i>
+            </a>
+          </li>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<style>
+  .status-pending {
+    color: orange;
+    font-weight: bold;
+  }
+  .status-completed {
+    color: green;
+    font-weight: bold;
+  }
+  .status-failed {
+    color: red;
+    font-weight: bold;
+  }
+  .pagination .active {
+    background-color: #286090;
+  }
+  .pagination .disabled a {
+    cursor: not-allowed;
+    color: grey;
+  }
+  th a {
+    color: #286090;
+    text-decoration: none;
+  }
+  th a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  // Handle status filter change
+  document.getElementById('statusFilter').addEventListener('change', function() {
+    const status = this.value;
+    const url = new URL(window.location.href);
+    url.searchParams.set('status', status);
+    url.searchParams.set('page', 1); // Reset to page 1 when filtering
+    window.location.href = url.toString();
+  });
+</script>
+
+<%- include('partials/dynaFooter') %>

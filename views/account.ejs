@@ -1,0 +1,118 @@
+<%- include('partials/dynaHeader')%>
+
+<div class=" alert-secondary custom-alert" role="alert">
+  <%= user.annText %> <a href="<%= user.annLink %>" class="alert-link btn btn-primary btn-sm">Click Now</a>
+</div>
+
+<style>
+.custom-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border: 1px solid #d1d3e2;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.custom-alert:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.alert-link.btn {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.alert-link.btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+  text-decoration: none;
+}
+
+.alert-link.btn:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .custom-alert {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .alert-link.btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
+      
+      <main class="app-py-1" style="height: 100vh;">
+        <div class="fade-appear-done fade-enter-done">
+          <div class="row"><br>
+            <div class="col l5 s12 offset-l1"><center>
+              
+              <% if (user.image) { %>
+                <img src="/IMG_UPLOADS/<%= user.image %>" class="circle" height="150px" alt="Profile Picture">
+              <% } else { %>
+                <img src="/static/account/assets/images/user.png" class="circle" height="150px" alt="Default Profile Picture">
+              <% } %>
+        
+              
+              <h2><%= user.first_name %> <%= user.last_name %></h2><p>Live Account</p></center>
+              <ul class="collection"><a class="collection-item bg" href="/depositHistory/<%=user._id%>">
+                <li><div style="padding: 1rem 1rem 0.8rem; background: rgb(50, 167, 226); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                  <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">savings</span>
+                </div>Deposits <span style="color: silver; font-size: 12px;"></span></li></a>
+                <a class="collection-item bg" href="/widthdrawHistory/<%=user._id%>">
+                  <li><div style="padding: 1rem 1rem 0.8rem; background: rgb(181, 72, 198); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                    <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">payments</span>
+                  </div>Withdrawals <span style="color: silver; font-size: 12px;"></span></li></a>
+                 </ul></div>
+                      <div class="col l5 s12"><br><br>
+                        <ul class="collection"><a class="collection-item bg" href="/watchlist"><li>
+                          <div style="padding: 1rem 1rem 0.8rem; background: rgb(255, 135, 0); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                            <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">star</span>
+                          </div>Watch List <span style="color: silver; font-size: 12px;"></span></li></a>
+                          <a class="collection-item bg" href="/update_email/<%=user._id%>">
+                            <li><div style="padding: 1rem 1rem 0.8rem; background: green; border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                              <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">mail</span>
+                            </div>Update Email <span style="color: silver; font-size: 12px;"></span></li></a>
+                            <a class="collection-item bg" href="/update_photo/<%=user._id%>">
+                              <li><div style="padding: 1rem 1rem 0.8rem; background: rgb(181, 72, 198); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                                <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">account_circle</span>
+                              </div>Update Photo <span style="color: silver; font-size: 12px;"></span></li></a>
+                              <a class="collection-item bg" href="/password_change/<%=user._id%>">
+                                <li><div style="padding: 1rem 1rem 0.8rem; background: rgb(50, 167, 226); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                                  <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">lock</span>
+                                </div>Update Password <span style="color: silver; font-size: 12px;"></span></li></a>
+                                <a class="collection-item bg" href="/settings_page">
+                                  <li><div style="padding: 1rem 1rem 0.8rem; background: rgb(181, 72, 198); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                                    <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">settings</span>
+                                  </div>Account Settings <span style="color: silver; font-size: 12px;"></span></li></a>
+                                  <li class="collection-item bg"><a href="/logout">
+                                    <div style="padding: 1rem 1rem 0.8rem; background: rgb(50, 167, 226); border-radius: 10px; display: inline-block; margin-right: 1rem;">
+                                      <span class="material-icons notranslate" style="font-size: 30px; margin: 0px; padding: 0px; color: white;">logout</span></div>
+                                      <span style="color: rgb(38, 166, 154);">Logout</span></a></li></ul><br><br></div>
+                                    </div>
+                                    
+                                    
+    <!--include footer navbar snipet-->
+    
+
+    <%- include('partials/dynaFooter')%>

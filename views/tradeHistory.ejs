@@ -1,0 +1,184 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <section style="margin-top: 3px;">
+      <div class="row">
+        <div class="col l12 s12">
+          <h4>Trade History</h4>
+          <% if (trades.length === 0) { %>
+            <p>No trades found.</p>
+          <% } else { %>
+            <ul class="collection">
+              <% trades.forEach(trade => { %>
+                <li class="collection-item">
+                  <div class="row">
+                    <div class="col l3 s6">
+                      <strong><%= trade.currencypair %></strong><br>
+                      Type: <%= trade.type %><br>
+                      Action: <%= trade.action %>
+                    </div>
+                    <div class="col l3 s6">
+                      Entry Price: $<span class="entry-price"><%= trade.entryPrice %></span><br>
+                      Stop Loss: $<%= trade.stopLoss %><br>
+                      Take Profit: $<%= trade.takeProfit %>
+                    </div>
+                    <div class="col l3 s6">
+                      Lot Size: <%= trade.lotsize %><br>
+                      Leverage: <%= trade.leverage %>x<br>
+                      Status: <span class="status"><%= trade.status %></span><br>
+                      Profit/Loss: <span class="profit-loss" data-trade-id="<%= trade._id %>">$0.00</span>
+                    </div>
+                    <div class="col l3 s6">
+                      <% if (trade.status === 'open') { %>
+                        <button class="btn red close-trade" data-trade-id="<%= trade._id %>">Close Trade</button>
+                      <% } else { %>
+                        <p>Trade Closed (P/L: $<span class="final-profit-loss" data-trade-id="<%= trade._id %>"><%= trade.profitLoss.toFixed(2) %></span>)</p>
+                      <% } %>
+                    </div>
+                  </div>
+                </li>
+              <% }) %>
+            </ul>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="fixed-footer bgc" style="z-index: 1;">
+        <ul class="tabs">
+          <li class="tab col s4"><a href="/dashboard"><span class="material-icons notranslate">home</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Home</span></a></li>
+          <li class="tab col s4"><a href="/mining/<%= user._id %>"><span class="material-icons notranslate">token</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Mining</span></a></li>
+          <li class="tab col s4"><a href="/trade/<%= user._id %>"><span class="material-icons notranslate">browse_gallery</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Trade</span></a></li>
+          <li class="tab col s4"><a href="/account/<%= user._id %>"><span class="material-icons notranslate">wallet</span><span class="hide-on-med-and-down" style="padding-left: 6px;">Profile</span></a></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Initialize tabs
+    $('.tabs').tabs();
+
+    // CoinMarketCap coin symbols
+    const coinMap = {
+      SOLUSD: 'SOL', BTCUSD: 'BTC', ETHUSD: 'ETH', ADAUSD: 'ADA', LTCUSD: 'LTC',
+      APEUSD: 'APE', XRPUSD: 'XRP', BCHUSD: 'BCH', MATICUSD: 'MATIC', BNBUSD: 'BNB',
+      ATOMUSD: 'ATOM', MKRUSD: 'MKR', ZECUSD: 'ZEC', AXSUSD: 'AXS', RUNEUSD: 'RUNE',
+      KSMUSD: 'KSM', FTMUSD: 'FTM', CAKEUSD: 'CAKE', UNIUSD: 'UNI', ICPUSD: 'ICP',
+      NEARUSD: 'NEAR', DOTUSD: 'DOT', MANAUSD: 'MANA', XLMUSD: 'XLM', GRTUSD: 'GRT',
+      NEOUSD: 'NEO', LINKUSD: 'LINK', TRXUSD: 'TRX', EGLDUSD: 'EGLD', EOSUSD: 'EOS',
+      HBARUSD: 'HBAR', DASHUSD: 'DASH', ALGOUSD: 'ALGO', XTZUSD: 'XTZ', FILUSD: 'FIL',
+      BSVUSD: 'BSV', XMRUSD: 'XMR', COMPUSD: 'COMP', WBTCUSD: 'WBTC', AAVEUSD: 'AAVE',
+      FTTUSD: 'FTT', KLAYUSD: 'KLAY', THETAUSD: 'THETA'
+    };
+
+    // Update profit/loss for open trades
+    function updateProfitLoss() {
+      $('.profit-loss').each(function () {
+        const tradeId = $(this).data('trade-id');
+        const status = $(`.status`, $(this).closest('.collection-item')).text();
+        if (status !== 'open') {
+          // Display saved profit/loss for closed trades
+          const finalProfitLoss = $(`.final-profit-loss[data-trade-id="${tradeId}"]`).text();
+          $(this).text(`$${finalProfitLoss}`);
+          $(this).css('color', parseFloat(finalProfitLoss) >= 0 ? 'green' : 'red');
+          return;
+        }
+
+        const trade = <%- JSON.stringify(trades) %>.find(t => t._id === tradeId);
+        const coinSymbol = coinMap[trade.currencypair];
+        if (!coinSymbol) return;
+
+        $.ajax({
+          url: `/coin-price?symbol=${coinSymbol}`,
+          type: 'GET',
+          success: (data) => {
+            const currentPrice = data.price || parseFloat(trade.entryPrice);
+            const entryPrice = parseFloat($(`.entry-price`, $(this).closest('.collection-item')).text());
+            const lotsize = parseFloat(trade.lotsize);
+            const leverage = trade.leverage;
+            const priceDiff = trade.action === 'UP' ? (currentPrice - entryPrice) : (entryPrice - currentPrice);
+            const profitLoss = (priceDiff * lotsize * leverage).toFixed(2);
+
+            $(this).text(`$${profitLoss}`);
+            $(this).css('color', parseFloat(profitLoss) >= 0 ? 'green' : 'red');
+
+            // Check for target/stop-loss hits
+            const takeProfit = parseFloat(trade.takeProfit);
+            const stopLoss = parseFloat(trade.stopLoss);
+            let shouldClose = false;
+
+            if (trade.action === 'UP') {
+              if (currentPrice >= takeProfit || currentPrice <= stopLoss) {
+                shouldClose = true;
+              }
+            } else {
+              if (currentPrice <= takeProfit || currentPrice >= stopLoss) {
+                shouldClose = true;
+              }
+            }
+
+            if (shouldClose) {
+              $.ajax({
+                url: `/trade/close/<%= user._id %>/${tradeId}`,
+                type: 'POST',
+                success: (response) => {
+                  if (response.success) {
+                    M.toast({ html: 'Trade closed automatically!', classes: 'green' });
+                    setTimeout(() => {
+                      location.reload();
+                    }, 1000);
+                  }
+                },
+                error: (xhr) => {
+                  M.toast({ html: 'Error closing trade', classes: 'red' });
+                }
+              });
+            }
+          },
+          error: () => {
+            console.error(`Failed to fetch price for ${coinSymbol}`);
+            $(this).text('$0.00');
+            $(this).css('color', 'black');
+          }
+        });
+      });
+    }
+
+    // Initial update and set interval
+    updateProfitLoss();
+    setInterval(updateProfitLoss, 5000);
+
+    // Handle manual close trade
+    $('.close-trade').on('click', function () {
+      const tradeId = $(this).data('trade-id');
+      $.ajax({
+        url: `/trade/close/<%= user._id %>/${tradeId}`,
+        type: 'POST',
+        success: function (response) {
+          if (response.success) {
+            M.toast({ html: response.message, classes: 'green' });
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          }
+        },
+        error: function (xhr) {
+          let errorMsg = 'An error occurred';
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMsg = xhr.responseJSON.error;
+          }
+          M.toast({ html: errorMsg, classes: 'red' });
+        }
+      });
+    });
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>

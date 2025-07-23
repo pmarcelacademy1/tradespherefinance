@@ -1,0 +1,216 @@
+<%- include('partials/header') %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Header Section -->
+      <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-dark">Editing Mining</h1>
+        <div class="text-end">
+          <small><b>Mining ID:</b> <%= mining._id %></small>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/adminRoute">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="/all-minings">All Minings</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= mining.owner ? `${mining.owner.first_name} ${mining.owner.last_name}` : 'Unknown User' %>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Edit Form -->
+      <form action="/editMining/<%= mining._id %>?_method=PUT" method="POST" class="bg-light p-4 rounded shadow" enctype="application/x-www-form-urlencoded">
+        <!-- Error Display -->
+        <% if (error) { %>
+          <div class="alert alert-danger" role="alert">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Mining Information -->
+        <h4 class="mb-3">Mining Information</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="coin" class="form-label">Coin</label>
+            <input type="text" class="form-control" id="coin" value="<%= mining.coin || 'N/A' %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Amount ($)</label>
+            <input type="number" step="0.01" class="form-control" id="amount" value="<%= mining.amount ? mining.amount.toFixed(2) : 'N/A' %>" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="profit" class="form-label">Profit</label>
+            <input type="text" class="form-control" id="profit" value="<%= mining.profit ? `${mining.profit.toFixed(6)} ${mining.coin}` : 'N/A' %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label for="dailyProfit" class="form-label">Daily Profit</label>
+            <input type="text" class="form-control" id="dailyProfit" value="<%= mining.dailyProfit ? `${mining.dailyProfit.toFixed(6)} ${mining.coin}` : 'N/A' %>" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="duration" class="form-label">Duration (days)</label>
+            <input type="number" class="form-control" id="duration" value="<%= mining.duration || 'N/A' %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label for="hashRate" class="form-label">Hash Rate</label>
+            <input type="text" class="form-control" id="hashRate" value="<%= mining.hashRate || 'N/A' %>" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="owner" class="form-label">Owner</label>
+            <input type="text" class="form-control" id="owner" value="<%= mining.owner ? `${mining.owner.first_name} ${mining.owner.last_name} (${mining.owner.email})` : 'Unknown User' %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label for="image" class="form-label">Payment Proof</label>
+            <input type="text" class="form-control" id="image" value="<%= mining.image ? 'View Image' : 'No proof uploaded' %>" readonly onclick="<%= mining.image ? `window.open('/IMG_UPLOADS/${mining.image}', '_blank')` : '' %>">
+          </div>
+        </div>
+
+        <!-- Editable Fields -->
+        <h4 class="mb-3">Editable Fields</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-control" id="status" name="status" required style="display: block; height: calc(2.25rem + 2px);">
+              <option value="" disabled <%= !mining.status ? 'selected' : '' %>>Select Status</option>
+              <option value="pending" <%= mining.status === 'pending' ? 'selected' : '' %>>Pending</option>
+              <option value="approved" <%= mining.status === 'approved' ? 'selected' : '' %>>Approved</option>
+              <option value="rejected" <%= mining.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid status.
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="datetime-local" class="form-control" id="startDate" name="startDate" value="<%= mining.startDate ? new Date(mining.startDate).toISOString().slice(0, 16) : '' %>">
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="datetime-local" class="form-control" id="endDate" name="endDate" value="<%= mining.endDate ? new Date(mining.endDate).toISOString().slice(0, 16) : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label for="createdAt" class="form-label">Created At</label>
+            <input type="text" class="form-control" id="createdAt" value="<%= new Date(mining.createdAt).toLocaleString() %>" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="updatedAt" class="form-label">Updated At</label>
+            <input type="text" class="form-control" id="updatedAt" value="<%= new Date(mining.updatedAt).toLocaleString() %>" readonly>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-primary">Update Mining</button>
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" id="deleteButton" data-bs-target="#deleteModal">Delete Mining</button>
+        </div>
+      </form>
+
+      <!-- Delete Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Confirm Mining Deletion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>This will remove the mining record with ID <b><%= mining._id %></b>.<br>Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form action="/deleteMining/<%= mining._id %>?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-primary">Yes, Remove Mining</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Form validation
+  document.querySelector('form').addEventListener('submit', (e) => {
+    const statusSelect = document.getElementById('status');
+    if (!statusSelect.value) {
+      e.preventDefault();
+      statusSelect.classList.add('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'block';
+    } else {
+      statusSelect.classList.remove('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'none';
+    }
+  });
+
+  // Ensure dropdown and inputs are visible on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const statusSelect = document.getElementById('status');
+    statusSelect.style.display = 'block'; // Force visibility
+    console.log('Status dropdown rendered:', statusSelect); // Debug
+  });
+</script>
+
+<style>
+  body {
+    padding-bottom: 4rem; /* Reserve space for fixed footer */
+  }
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  .is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  }
+  .invalid-feedback {
+    display: none;
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+  }
+  .form-control, .form-select {
+    display: block !important; /* Ensure visibility */
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+  input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+  }
+  .container.my-5 {
+    margin-bottom: 8rem; /* Increased margin for extra spacing */
+  }
+  /* Ensure footer is styled correctly if fixed */
+  footer {
+    z-index: 1000; /* Ensure footer stays above content */
+  }
+  /* Responsive adjustments */
+  @media (max-width: 576px) {
+    .container.my-5 {
+      margin-bottom: 10rem; /* Extra margin for small screens */
+    }
+    body {
+      padding-bottom: 6rem; /* More space for small screens */
+    }
+  }
+</style>
+
+<%- include('partials/footer') %>

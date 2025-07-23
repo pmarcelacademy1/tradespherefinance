@@ -1,0 +1,259 @@
+<%- include('partials/header') %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Header Section -->
+      <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-dark">Editing Trade</h1>
+        <div class="text-end">
+          <small><b>Trade ID:</b> <%= livetrade._id %></small>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/adminRoute">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="/all-livetrade">All Trades</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= livetrade.owner ? livetrade.owner.fullname : 'Unknown User' %>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Edit Form -->
+      <form action="/edit-livetrade/<%= livetrade._id %>?_method=PUT" method="POST" class="bg-light p-4 rounded shadow" enctype="application/x-www-form-urlencoded">
+        <!-- Error Display -->
+        <% if (error) { %>
+          <div class="alert alert-danger" role="alert">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Trade Information -->
+        <h4 class="mb-3">Trade Information</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="currencypair" class="form-label">Currency Pair</label>
+            <input type="text" class="form-control" id="currencypair" name="currencypair" value="<%= livetrade.currencypair %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="type" class="form-label">Type</label>
+            <input type="text" class="form-control" id="type" name="type" value="<%= livetrade.type %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="action" class="form-label">Action</label>
+            <input type="text" class="form-control" id="action" name="action" value="<%= livetrade.action %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="lotsize" class="form-label">Lot Size</label>
+            <input type="text" class="form-control" id="lotsize" name="lotsize" value="<%= livetrade.lotsize.toFixed(4) %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="entryPrice" class="form-label">Entry Price</label>
+            <input type="text" class="form-control" id="entryPrice" name="entryPrice" value="$<%= livetrade.entryPrice.toFixed(2) %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="stopLoss" class="form-label">Stop Loss</label>
+            <input type="text" class="form-control" id="stopLoss" name="stopLoss" value="$<%= livetrade.stopLoss.toFixed(2) %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="takeProfit" class="form-label">Take Profit</label>
+            <input type="text" class="form-control" id="takeProfit" name="takeProfit" value="$<%= livetrade.takeProfit.toFixed(2) %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="leverage" class="form-label">Leverage</label>
+            <input type="text" class="form-control" id="leverage" name="leverage" value="<%= livetrade.leverage %>x" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status" required>
+              <option value="" <%= !livetrade.status ? 'selected' : '' %>>Select Status</option>
+              <option value="open" <%= livetrade.status === 'open' ? 'selected' : '' %>>Open</option>
+              <option value="closed" <%= livetrade.status === 'closed' ? 'selected' : '' %>>Closed</option>
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid status.
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="profitLoss" class="form-label">Profit/Loss</label>
+            <input type="text" class="form-control <%= livetrade.profitLoss >= 0 ? 'text-success' : 'text-danger' %>" id="profitLoss" name="profitLoss" value="$<%= livetrade.profitLoss.toFixed(2) %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="text" class="form-control" id="amount" name="amount" value="$<%= livetrade.amount.toFixed(2) %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="owner" class="form-label">Owner</label>
+            <input type="text" class="form-control" id="owner" name="owner" value="<%= livetrade.owner ? `${livetrade.owner.fullname} (${livetrade.owner.email})` : 'Unknown User' %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="createdAt" class="form-label">Created At</label>
+            <input type="text" class="form-control" id="createdAt" name="createdAt" value="<%= new Date(livetrade.createdAt).toLocaleString() %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="updatedAt" class="form-label">Updated At</label>
+            <input type="text" class="form-control" id="updatedAt" name="updatedAt" value="<%= new Date(livetrade.updatedAt).toLocaleString() %>" readonly required>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions-sticky d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-primary">Update Trade</button>
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Trade</button>
+        </div>
+      </form>
+
+      <!-- Delete Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Confirm Trade Deletion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>This will remove the trade with ID <b><%= livetrade._id %></b>.<br>Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form action="/delete-livetrade/<%= livetrade._id %>?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-primary">Yes, Remove Trade</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Form validation
+  (function () {
+    'use strict';
+    const form = document.querySelector('form');
+    const statusSelect = document.getElementById('status');
+
+    // Clear validation on input change
+    statusSelect.addEventListener('change', () => {
+      const validStatuses = ['open', 'closed'];
+      if (validStatuses.includes(statusSelect.value)) {
+        statusSelect.classList.remove('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'none';
+      } else {
+        statusSelect.classList.add('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'block';
+      }
+    });
+
+    // Validate on submit
+    form.addEventListener('submit', (e) => {
+      const validStatuses = ['open', 'closed'];
+      if (!validStatuses.includes(statusSelect.value)) {
+        e.preventDefault();
+        statusSelect.classList.add('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'block';
+      } else {
+        statusSelect.classList.remove('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'none';
+      }
+    });
+
+    // Initialize validation state
+    const validStatuses = ['open', 'closed'];
+    if (validStatuses.includes(statusSelect.value)) {
+      statusSelect.classList.remove('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'none';
+    } else {
+      statusSelect.classList.add('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'block';
+    }
+  })();
+</script>
+
+<style>
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  .is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  }
+  .invalid-feedback {
+    display: none;
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+  }
+  .form-control, .form-select {
+    display: block !important;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+  .text-success {
+    color: #28a745 !important;
+  }
+  .text-danger {
+    color: #dc3545 !important;
+  }
+  .form-actions-sticky {
+    position: sticky;
+    bottom: 20px;
+    background: #f8f9fa;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    border-radius: 0.25rem;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  }
+  form {
+    padding-bottom: 100px; /* Increased to prevent overlap */
+    position: relative; /* Ensure sticky works within form */
+  }
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .form-actions-sticky {
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+    }
+    .form-actions-sticky button {
+      width: 100%;
+    }
+    form {
+      padding-bottom: 120px; /* Extra padding for smaller screens */
+    }
+  }
+  @media (max-width: 576px) {
+    .form-actions-sticky {
+      padding: 8px;
+    }
+    form {
+      padding-bottom: 140px; /* More padding for very small screens */
+    }
+  }
+</style>
+
+<%- include('partials/footer') %>

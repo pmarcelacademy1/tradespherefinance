@@ -1,0 +1,70 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <section class="center">
+      <br><b>SELECT WITHDRAWAL METHOD</b><br><br>
+      <div class="row">
+        <div class="col l4 s12 offset-l4">
+          <ul class="collection">
+            <li class="collection-item app-py-2 app-px-2">
+              <a href="#" data-method="Bank" class="withdraw-method"><b>Bank</b></a>
+            </li>
+            <li class="collection-item app-py-2 app-px-2">
+              <a href="#" data-method="Cryptocurrency" class="withdraw-method"><b>Crypto</b></a>
+            </li>
+            <li class="collection-item app-py-2 app-px-2">
+              <a href="#" data-method="PayPal" class="withdraw-method"><b>PayPal</b></a>
+            </li>
+            <li class="collection-item app-py-2 app-px-2">
+              <a href="#" data-method="CashApp" class="withdraw-method"><b>CashApp</b></a>
+            </li>
+            <li class="collection-item app-py-2 app-px-2">
+              <a href="#" data-method="GCash" class="withdraw-method"><b>GCash</b></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  jQuery(document).ready(function ($) {
+    $('.withdraw-method').on('click', function (e) {
+      e.preventDefault();
+      const method = $(this).data('method');
+      // Store withdrawal method in localStorage
+      localStorage.setItem('withdrawMethod', method);
+      console.log(`Stored withdrawMethod in localStorage: ${method}`); // Debug
+      // Redirect to the appropriate withdrawal page
+      const userId = '<%= user._id %>'; // Ensure user._id is passed to the view
+      let redirectUrl;
+      switch (method) {
+        case 'Bank':
+          redirectUrl = `/bank_withdraw/${userId}`;
+          break;
+        case 'Cryptocurrency':
+          redirectUrl = `/bitcoin_withdraw/${userId}`;
+          break;
+        case 'PayPal':
+          redirectUrl = `/paypal_withdraw/${userId}`;
+          break;
+        case 'CashApp':
+          redirectUrl = `/cashapp_withdraw/${userId}`;
+          break;
+        case 'GCash':
+          redirectUrl = `/gcash_withdraw/${userId}`;
+          break;
+        default:
+          console.error('Unknown withdrawal method:', method);
+          return;
+      }
+      console.log(`Redirecting to: ${redirectUrl}`); // Debug
+      window.location.href = redirectUrl;
+    });
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>

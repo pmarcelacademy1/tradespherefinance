@@ -1,0 +1,125 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="container" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <br>
+    <center>
+      <a href="/account_types/<%= user._id %>" class="btn btn-large" style="background-color:#286090;">BACK TO PLANS</a>
+    </center>
+
+    <!-- Display Flash Messages -->
+    <% if (messages.error && messages.error.length > 0) { %>
+      <div style="background-color: #ffebee; color: #c62828; padding: 15px; margin: 20px; border-radius: 4px;">
+        <%= messages.error %>
+      </div>
+    <% } %>
+    <% if (messages.success && messages.success.length > 0) { %>
+      <div style="background-color: #e8f5e9; color: #2e7d32; padding: 15px; margin: 20px; border-radius: 4px;">
+        <%= messages.success %>
+      </div>
+    <% } %>
+
+    <!-- Filter Form -->
+    <div class="container">
+      <div class="card-panel">
+        <form id="filterForm" method="GET" action="/upgradeHistory/<%= user._id %>">
+          <div class="row">
+            <div class="input-field col l4 s12">
+              <select name="status" class="browser-default">
+                <option value="All" <%= filters.status === 'All' ? 'selected' : '' %>>All Statuses</option>
+                <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                <option value="approved" <%= filters.status === 'approved' ? 'selected' : '' %>>Approved</option>
+                <option value="rejected" <%= filters.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+              </select>
+              <label>Status</label>
+            </div>
+            <div class="input-field col l4 s12">
+              <input type="date" name="startDate" value="<%= filters.startDate %>" id="startDate">
+              <label for="startDate">Start Date</label>
+            </div>
+            <div class="input-field col l4 s12">
+              <input type="date" name="endDate" value="<%= filters.endDate %>" id="endDate">
+              <label for="endDate">End Date</label>
+            </div>
+          </div>
+          <div class="center">
+            <button type="submit" class="btn" style="background-color:#286090;">Apply Filters</button>
+            <a href="/upgradeHistory/<%= user._id %>" class="btn grey">Clear Filters</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Upgrade History Table -->
+    <center>
+      <p class="center">Upgrade History</p>
+    </center>
+    <div class="container">
+      <ul class="collection">
+        <li class="collection-item app-py-2">
+          <table class="responsive-table striped">
+            <thead>
+              <tr>
+                <th>Plan</th>
+                <th>Method</th>
+                <th>Status</th>
+                <th>Image</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (upgrades && upgrades.length > 0) { %>
+                <% upgrades.forEach(upgrade => { %>
+                  <tr>
+                    <td><%= upgrade.Plan %></td>
+                    <td><%= upgrade.method %></td>
+                    <td><%= upgrade.status %></td>
+                    <td>
+                      <% if (upgrade.image) { %>
+                        <a href="/IMG_UPLOADS/<%= upgrade.image %>" target="_blank">View Image</a>
+                      <% } else { %>
+                        N/A
+                      <% } %>
+                    </td>
+                    <td><%= new Date(upgrade.createdAt).toLocaleDateString() %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="5"><center>No upgrades found!</center></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <!-- Pagination -->
+      <% if (pagination.totalPages > 1) { %>
+        <div class="center">
+          <ul class="pagination">
+            <li class="<%= pagination.page === 1 ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.page > 1 ? `/upgradeHistory/${user._id}?page=${pagination.page - 1}&limit=${pagination.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_left</i>
+              </a>
+            </li>
+            <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+              <li class="<%= pagination.page === i ? 'active' : 'waves-effect' %>">
+                <a href="/upgradeHistory/<%= user._id %>?page=<%= i %>&limit=<%= pagination.limit %>&status=<%= filters.status %>&startDate=<%= filters.startDate %>&endDate=<%= filters.endDate %>">
+                  <%= i %>
+                </a>
+              </li>
+            <% } %>
+            <li class="<%= pagination.page === pagination.totalPages ? 'disabled' : 'waves-effect' %>">
+              <a href="<%= pagination.page < pagination.totalPages ? `/upgradeHistory/${user._id}?page=${pagination.page + 1}&limit=${pagination.limit}&status=${filters.status}&startDate=${filters.startDate}&endDate=${filters.endDate}` : '#' %>">
+                <i class="material-icons">chevron_right</i>
+              </a>
+            </li>
+          </ul>
+          <p>Showing <%= (pagination.page - 1) * pagination.limit + 1 %> to <%= Math.min(pagination.page * pagination.limit, pagination.totalUpgrades) %> of <%= pagination.totalUpgrades %> upgrades</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/dynaFooter')%>

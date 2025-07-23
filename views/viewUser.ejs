@@ -1,0 +1,402 @@
+<%- include('partials/header') %>
+
+<div class="container text-white" style="min-height: 100vh; background-color: #212529;">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><%= user.fullname %></h1>
+    <div class="text-end">
+      <small><b>User ID:</b> <%= user._id %></small><br>
+      <small><b>Last Updated:</b> <%= new Date(user.updatedAt).toLocaleString() %></small>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-dark text-white">
+      <li class="breadcrumb-item"><a href="/adminRoute" class="text-white">Dashboard</a></li>
+      <li class="breadcrumb-item active text-white" aria-current="page"><%= user.fullname %></li>
+    </ol>
+  </nav>
+
+  <!-- User Details -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Personal Information</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Name:</b></div>
+              <div class="col-8"><%= user.fullname %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Email:</b></div>
+              <div class="col-8"><%= user.email %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Telephone:</b></div>
+              <div class="col-8"><%= user.tel %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>otp code:</b></div>
+              <div class="col-8"><%= user.otp %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Gender:</b></div>
+              <div class="col-8"><%= user.gender %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Country:</b></div>
+              <div class="col-8"><%= user.country %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>State:</b></div>
+              <div class="col-8"><%= user.state %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>City:</b></div>
+              <div class="col-8"><%= user.city %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Zip Code:</b></div>
+              <div class="col-8"><%= user.zip_code %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Address:</b></div>
+              <div class="col-8"><%= user.address %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Account Information</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Currency:</b></div>
+              <div class="col-8"><%= user.currency %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Balance:</b></div>
+              <div class="col-8">$<%= parseFloat(user.balance).toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Available Balance:</b></div>
+              <div class="col-8">$<%= parseFloat(user.available).toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Withdraw Balance:</b></div>
+              <div class="col-8">$<%= parseFloat(user.widthdrawBalance).toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Bonus:</b></div>
+              <div class="col-8">$<%= parseFloat(user.bonus).toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Profit:</b></div>
+              <div class="col-8">$<%= parseFloat(user.profit).toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Total Deposit:</b></div>
+              <div class="col-8">$<%= parseFloat(user.totalDeposit).toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Total Withdraw:</b></div>
+              <div class="col-8">$<%= parseFloat(user.totalWidthdraw).toFixed(2) %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Verification & Status</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Email Verified:</b></div>
+              <div class="col-8"><%= user.isVerified ? 'Yes' : 'No' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>KYC Verified:</b></div>
+              <div class="col-8"><%= user.kycVerified ? 'Yes' : 'No' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Verification Status:</b></div>
+              <div class="col-8"><%= user.verifiedStatus %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Is Suspended:</b></div>
+              <div class="col-8"><%= user.isSuspended ? 'Yes' : 'No' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Role:</b></div>
+              <div class="col-8"><%= user.role === 0 ? 'User' : 'Admin' %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Account Types</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <% user.accountTypes.forEach(type => { %>
+            <li class="list-group-item bg-dark text-white">
+              <div class="row">
+                <div class="col-4"><b><%= type.name %>:</b></div>
+                <div class="col-8">Min Deposit: $<%= type.minDeposit.toFixed(2) %></div>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Crypto Addresses</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>BTC Address:</b></div>
+              <div class="col-8"><%= user.btc_add %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>ETH Address:</b></div>
+              <div class="col-8"><%= user.eth_add %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>USDT Address:</b></div>
+              <div class="col-8"><%= user.usdt_add %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Activity</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Deposits:</b></div>
+              <div class="col-8">
+                <%= user.deposits.length %> deposit(s)
+                <% if (user.deposits.length > 0) { %>
+                  <ul>
+                    <% user.deposits.forEach(dep => { %>
+                      <li>ID: <%= dep._id %>, Amount: $<%= dep.amount ? parseFloat(dep.amount).toFixed(2) : 'N/A' %></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Withdrawals:</b></div>
+              <div class="col-8">
+                <%= user.widthdraws.length %> withdrawal(s)
+                <% if (user.widthdraws.length > 0) { %>
+                  <ul>
+                    <% user.widthdraws.forEach(wd => { %>
+                      <li>ID: <%= wd._id %>, Amount: $<%= wd.amount ? parseFloat(wd.amount).toFixed(2) : 'N/A' %></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Upgrades:</b></div>
+              <div class="col-8">
+                <%= user.upgrades.length %> upgrade(s)
+                <% if (user.upgrades.length > 0) { %>
+                  <ul>
+                    <% user.upgrades.forEach(up => { %>
+                      <li>ID: <%= up._id %></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Live Trades:</b></div>
+              <div class="col-8">
+                <%= user.livetrades.length %> trade(s)
+                <% if (user.livetrades.length > 0) { %>
+                  <ul>
+                    <% user.livetrades.forEach(tr => { %>
+                      <li>ID: <%= tr._id %></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Copy Trades:</b></div>
+              <div class="col-8">
+                <%= user.copyTrades.length %> trade(s)
+                <% if (user.copyTrades.length > 0) { %>
+                  <ul>
+                    <% user.copyTrades.forEach(ct => { %>
+                      <li>ID: <%= ct._id %></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Minings:</b></div>
+              <div class="col-8">
+                <%= user.minings.length %> mining(s)
+                <% if (user.minings.length > 0) { %>
+                  <ul>
+                    <% user.minings.forEach(mn => { %>
+                      <li>ID: <%= mn._id %></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Verifications:</b></div>
+              <div class="col-8">
+                <%= user.verified.length %> verification(s)
+                <% if (user.verified.length > 0) { %>
+                  <ul>
+                    <% user.verified.forEach(vr => { %>
+                      <li>ID: <%= vr._id %></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Security</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Security Question:</b></div>
+              <div class="col-8"><%= user.security_question %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Session:</b></div>
+              <div class="col-8"><%= user.session %></div>
+            </div>
+          </li>
+
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>annoucement link:</b></div>
+              <div class="col-8"><%= user.annLink %></div>
+            </div>
+          </li>
+
+           <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>annoucement Text:</b></div>
+              <div class="col-8"><%= user.annText %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Timestamps</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Created At:</b></div>
+              <div class="col-8"><%= new Date(user.createdAt).toLocaleString() %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Updated At:</b></div>
+              <div class="col-8"><%= new Date(user.updatedAt).toLocaleString() %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

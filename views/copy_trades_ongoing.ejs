@@ -1,0 +1,141 @@
+<%- include('partials/dynaHeader')%>
+
+<main class="app-py-1" style="height: 100vh;">
+  <div class="fade-appear-done fade-enter-done">
+    <div class="container">
+      <h4>Ongoing Copy Trades</h4>
+      <a href="/copy_traders/<%= user._id %>" class="btn blue">Back to Copy Traders</a>
+      <% if (copyTrades.length === 0) { %>
+        <p>No ongoing copy trades.</p>
+      <% } else { %>
+        <ul class="collection">
+          <% copyTrades.forEach(trade => { %>
+            <li class="collection-item">
+              <div class="row">
+                <div class="col l4 s6">
+                  <strong><%= trade.traderName %></strong><br>
+                  Status: <span class="status"><%= trade.status %></span><br>
+                  Account Type: <%= trade.accountType %>
+                </div>
+                <div class="col l4 s6">
+                  Amount: $<%= trade.amount.toFixed(2) %><br>
+                  Win Rate: <%= trade.winRate %>%<br>
+                  Profit Share: <%= trade.profitShare %>%<br>
+                  Duration: <%= trade.duration %> days
+                </div>
+                <div class="col l4 s6">
+                  Start Date: <%= trade.startDate.toLocaleDateString() %><br>
+                  End Date: <%= trade.endDate.toLocaleDateString() %><br>
+                  Current Profit: $<span class="current-profit" data-trade-id="<%= trade._id %>"><%= trade.currentProfit.toFixed(2) %></span>
+                </div>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<style>
+  .collection-item { margin-bottom: 10px; }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Safely serialize trade IDs and key fields
+    console.log('Ongoing trades script loaded', { 
+      trades: <%- JSON.stringify(copyTrades.map(t => ({
+        _id: t._id.toString(),
+        traderName: t.traderName,
+        amount: t.amount,
+        winRate: t.winRate,
+        startDate: t.startDate ? t.startDate.toISOString() : null
+      }))) %>
+    });
+
+    function updateProfits() {
+      console.log('Fetching profits from server...');
+      $.ajax({
+        url: '/copy_trades_profit/<%= user._id %>',
+        method: 'GET',
+        success: function (data) {
+          console.log('Received profit data:', data);
+          data.trades.forEach(trade => {
+            const $profitSpan = $(`.current-profit[data-trade-id="${trade._id}"]`);
+            if ($profitSpan.length && trade.currentProfit > 0) {
+              $profitSpan.text(parseFloat(trade.currentProfit).toFixed(2));
+              console.log(`Updated profit for trade ${trade._id} from server: $${trade.currentProfit}`);
+            }
+          });
+        },
+        error: function (xhr) {
+          console.error('Failed to fetch profits:', xhr.responseText);
+        }
+      });
+
+      // Client-side calculation
+      $('.current-profit').each(function () {
+        const tradeId = $(this).data('trade-id');
+        const trade = <%- JSON.stringify(copyTrades.map(t => ({
+          _id: t._id.toString(),
+          traderName: t.traderName,
+          amount: t.amount,
+          winRate: t.winRate,
+          profitShare: t.profitShare,
+          startDate: t.startDate ? t.startDate.toISOString() : null,
+          duration: t.duration,
+          status: t.status,
+          currentProfit: t.currentProfit
+        }))) %>.find(t => t._id === tradeId);
+
+        if (!trade) {
+          console.error('Trade not found:', tradeId);
+          return;
+        }
+
+        console.log(`Processing trade ${tradeId}:`, {
+          traderName: trade.traderName,
+          amount: trade.amount,
+          winRate: trade.winRate,
+          profitShare: trade.profitShare,
+          startDate: trade.startDate,
+          status: trade.status
+        });
+
+        if (trade.status !== 'active') {
+          console.log(`Trade ${tradeId} is ${trade.status}, no update`);
+          return;
+        }
+
+        const now = new Date();
+        const startDate = trade.startDate ? new Date(trade.startDate) : null;
+        if (!startDate || isNaN(startDate)) {
+          console.error(`Invalid startDate for trade ${tradeId}:`, trade.startDate);
+          return;
+        }
+
+        const daysElapsed = (now - startDate) / (24 * 60 * 60 * 1000);
+        console.log(`Trade ${tradeId}: Days elapsed = ${daysElapsed.toFixed(2)}, Duration = ${trade.duration}`);
+
+        if (daysElapsed >= trade.duration) {
+          console.log(`Trade ${tradeId} duration exceeded`);
+          $(this).text(parseFloat(trade.currentProfit).toFixed(2));
+          return;
+        }
+
+        const dailyProfit = trade.amount * (trade.winRate / 100 * 0.01);
+        const totalProfit = dailyProfit * daysElapsed * (1 - trade.profitShare / 100);
+        console.log(`Trade ${tradeId}: Daily profit = ${dailyProfit.toFixed(2)}, Total profit = ${totalProfit.toFixed(2)}`);
+        $(this).text(totalProfit.toFixed(2));
+      });
+    }
+
+    updateProfits();
+    setInterval(updateProfits, 5000);
+  });
+</script>
+
+<%- include('partials/dynaFooter')%>

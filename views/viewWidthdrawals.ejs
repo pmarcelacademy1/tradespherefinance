@@ -1,0 +1,99 @@
+<%- include('partials/header') %>
+
+<div class="container text-white" style="min-height: 100vh; background-color: #212529;">
+  <!-- Error Display -->
+  <% if (error) { %>
+    <div class="alert alert-danger" role="alert">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+      <%= widthdraw.owner ? `${widthdraw.owner.first_name} ${widthdraw.owner.last_name}` : 'Unknown User' %>
+    </h1>
+    <div class="text-end">
+      <small><b>Withdrawal ID:</b> <%= widthdraw._id %></small><br>
+      <small><b>Last Updated:</b> <%= new Date(widthdraw.updatedAt).toLocaleString() %></small>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-dark text-white">
+      <li class="breadcrumb-item"><a href="/adminRoute" class="text-white">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="/allWidthdrawals" class="text-white">All Withdrawals</a></li>
+      <li class="breadcrumb-item active text-white" aria-current="page">
+        <%= widthdraw.owner ? `${widthdraw.owner.first_name} ${widthdraw.owner.last_name}` : 'Unknown User' %>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Withdrawal Details -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Withdrawal Details</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Withdrawal Method:</b></div>
+              <div class="col-8"><%= widthdraw.type || 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Amount:</b></div>
+              <div class="col-8">$<%= widthdraw.amount.toFixed(2) %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Status:</b></div>
+              <div class="col-8">
+                <span class="<%= widthdraw.status === 'pending' ? 'text-warning' : widthdraw.status === 'completed' ? 'text-success' : 'text-danger' %>">
+                  <%= widthdraw.status.charAt(0).toUpperCase() + widthdraw.status.slice(1) %>
+                </span>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Narration:</b></div>
+              <div class="col-8"><%= widthdraw.narration || 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>From:</b></div>
+              <div class="col-8"><%= widthdraw.from || 'N/A' %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Owner:</b></div>
+              <div class="col-8">
+                <%= widthdraw.owner ? `${widthdraw.owner.first_name} ${widthdraw.owner.last_name} (${widthdraw.owner.email})` : 'Unknown User' %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Created At:</b></div>
+              <div class="col-8"><%= new Date(widthdraw.createdAt).toLocaleString() %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Updated At:</b></div>
+              <div class="col-8"><%= new Date(widthdraw.updatedAt).toLocaleString() %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

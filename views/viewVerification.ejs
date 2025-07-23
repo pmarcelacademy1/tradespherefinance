@@ -1,0 +1,247 @@
+<%- include('partials/header') %>
+
+<div class="container text-white" style="min-height: 100vh; background-color: #212529;">
+  <!-- Flash Messages -->
+  <% if (messages.error && messages.error.length > 0) { %>
+    <div class="row">
+      <div class="col s12">
+        <div class="card red darken-1">
+          <div class="card-content white-text">
+            <span class="card-title">Error</span>
+            <p><%= messages.error %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Verification Details</h1>
+    <div class="text-end">
+      <small><b>Verification ID:</b> <%= verify._id %></small><br>
+      <small><b>Last Updated:</b> <%= new Date(verify.updatedAt).toLocaleString() %></small>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-dark text-white">
+      <li class="breadcrumb-item"><a href="/adminRoute" class="text-white">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="/allVerify" class="text-white">All Verifications</a></li>
+      <li class="breadcrumb-item active text-white" aria-current="page">
+        <%= verify.owner ? `${verify.owner.first_name} ${verify.owner.last_name}` : 'Unknown User' %>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Verification Details -->
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Verification Information</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Email:</b></div>
+              <div class="col-8"><%= verify.email %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Username:</b></div>
+              <div class="col-8"><%= verify.username %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Fullname:</b></div>
+              <div class="col-8"><%= verify.fullname %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>City:</b></div>
+              <div class="col-8"><%= verify.city %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Gender:</b></div>
+              <div class="col-8"><%= verify.gender %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Date of Birth:</b></div>
+              <div class="col-8"><%= verify.dateofBirth %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Marital Status:</b></div>
+              <div class="col-8"><%= verify.marital %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Age:</b></div>
+              <div class="col-8"><%= verify.age %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Address:</b></div>
+              <div class="col-8"><%= verify.address %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Owner:</b></div>
+              <div class="col-8">
+                <%= verify.owner ? `${verify.owner.first_name} ${verify.owner.last_name} (${verify.owner.email})` : 'Unknown User' %>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-header">Images & Timestamps</div>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Front Images:</b></div>
+              <div class="col-8">
+                <% if (verify.images && verify.images.length > 0) { %>
+                  <div class="image-gallery">
+                    <% verify.images.forEach(image => { %>
+                      <img src="/IMG_UPLOADS/<%= image %>" alt="Front Image" class="verify-image img-fluid">
+                    <% }) %>
+                  </div>
+                <% } else { %>
+                  <p>No front images uploaded.</p>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Back Image:</b></div>
+              <div class="col-8">
+                <% if (verify.backImage) { %>
+                  <div class="image-gallery">
+                    <img src="/IMG_UPLOADS/<%= verify.backImage %>" alt="Back Image" class="verify-image img-fluid">
+                  </div>
+                <% } else { %>
+                  <p>No back image uploaded.</p>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Created At:</b></div>
+              <div class="col-8"><%= new Date(verify.createdAt).toLocaleString() %></div>
+            </div>
+          </li>
+          <li class="list-group-item bg-dark text-white">
+            <div class="row">
+              <div class="col-4"><b>Updated At:</b></div>
+              <div class="col-8"><%= new Date(verify.updatedAt).toLocaleString() %></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="row">
+    <div class="col s12">
+      <div class="card bg-dark text-white mb-3">
+        <div class="card-content">
+          <div class="d-flex flex-row gap-2">
+           
+            <form action="/deleteVerify/<%= verify._id %>?_method=DELETE" method="POST">
+              <button type="submit" class="btn red">
+                <i class="material-icons left">delete</i>Delete Verification
+              </button>
+            </form>
+            <a href="/allVerify" class="btn grey">
+              <i class="material-icons left">arrow_back</i>Back to Verifications
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .d-flex {
+    display: flex;
+  }
+  .flex-row {
+    flex-direction: row;
+  }
+  .gap-2 {
+    gap: 10px;
+  }
+  .breadcrumb {
+    background-color: #212529 !important;
+  }
+
+  /* Responsive Image Gallery */
+  .image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+  .verify-image {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .verify-image:hover {
+    transform: scale(1.05);
+  }
+
+  /* Large screens (desktops) */
+  @media (min-width: 992px) {
+    .verify-image {
+      max-width: 200px;
+      max-height: 150px;
+    }
+  }
+
+  /* Medium screens (tablets) */
+  @media (min-width: 768px) and (max-width: 991px) {
+    .verify-image {
+      max-width: 150px;
+      max-height: 120px;
+    }
+  }
+
+  /* Small screens (mobiles) */
+  @media (max-width: 767px) {
+    .verify-image {
+      max-width: 100%;
+      max-height: 200px;
+    }
+    .image-gallery {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+
+<%- include('partials/footer') %>

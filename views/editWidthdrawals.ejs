@@ -1,0 +1,209 @@
+<%- include('partials/header') %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Header Section -->
+      <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 text-dark">
+          Editing: <%= widthdraw.owner ? `${widthdraw.owner.first_name} ${widthdraw.owner.last_name}` : 'Unknown User' %>
+        </h1>
+        <div class="text-end">
+          <small><b>Withdrawal ID:</b> <%= widthdraw._id %></small>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/adminRoute">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="/allWidthdrawals">All Withdrawals</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= widthdraw.owner ? `${widthdraw.owner.first_name} ${widthdraw.owner.last_name}` : 'Unknown User' %>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Edit Form -->
+      <form action="/editWidthdrawals/<%= widthdraw._id %>?_method=PUT" method="POST" class="bg-light p-4 rounded shadow" enctype="application/x-www-form-urlencoded">
+        <!-- Error Display -->
+        <% if (error) { %>
+          <div class="alert alert-danger" role="alert">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Withdrawal Information -->
+        <h4 class="mb-3">Withdrawal Information</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="type" class="form-label">Withdrawal Method</label>
+            <input type="text" class="form-control" id="type" name="type" value="<%= widthdraw.type || 'N/A' %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="<%= widthdraw.amount.toFixed(2) %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="status" class="form-label">Withdrawal Status</label>
+            <select class="form-select" id="status" name="status" required data-status="<%= widthdraw.status %>">
+              <option value="" <%= !widthdraw.status ? 'selected' : '' %>>Select Status</option>
+              <option value="pending" <%= widthdraw.status === 'pending' ? 'selected' : '' %>>Pending</option>
+              <option value="completed" <%= widthdraw.status === 'completed' ? 'selected' : '' %>>Completed</option>
+              <option value="failed" <%= widthdraw.status === 'failed' ? 'selected' : '' %>>Failed</option>
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid status.
+            </div>
+            <!-- Fallback display if dropdown fails -->
+            <small class="text-muted">Current status: <%= widthdraw.status || 'None' %></small>
+          </div>
+          <div class="col-md-6">
+            <label for="narration" class="form-label">Narration</label>
+            <input type="text" class="form-control" id="narration" name="narration" value="<%= widthdraw.narration || 'N/A' %>" readonly required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="from" class="form-label">From</label>
+            <input type="text" class="form-control" id="from" name="from" value="<%= widthdraw.from || 'N/A' %>" readonly required>
+          </div>
+          <div class="col-md-6">
+            <label for="owner" class="form-label">Owner</label>
+            <input type="text" class="form-control" id="owner" name="owner" value="<%= widthdraw.owner ? `${widthdraw.owner.first_name} ${widthdraw.owner.last_name} (${widthdraw.owner.email})` : 'Unknown User' %>" readonly required>
+          </div>
+        </div>
+      
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-primary">Update Withdrawal</button>
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" id="deleteButton" data-bs-target="#deleteModal">Delete Withdrawal</button>
+        </div>
+      </form>
+
+      <!-- Delete Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Confirm Withdrawal Deletion</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>This will remove the withdrawal record with ID <b><%= widthdraw._id %></b>.<br>Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form action="/deleteWidthdrawal/<%= widthdraw._id %>?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-primary">Yes, Remove Withdrawal</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Form validation
+  (function () {
+    'use strict';
+    const form = document.querySelector('form');
+    const statusSelect = document.getElementById('status');
+
+    // Log status for debugging
+    console.log('Initial status value:', statusSelect.value);
+
+    // Clear validation on input change
+    statusSelect.addEventListener('change', () => {
+      const validStatuses = ['pending', 'completed', 'failed'];
+      if (validStatuses.includes(statusSelect.value)) {
+        statusSelect.classList.remove('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'none';
+      } else {
+        statusSelect.classList.add('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'block';
+      }
+    });
+
+    // Validate on submit
+    form.addEventListener('submit', (e) => {
+      const validStatuses = ['pending', 'completed', 'failed'];
+      if (!validStatuses.includes(statusSelect.value)) {
+        e.preventDefault();
+        statusSelect.classList.add('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'block';
+      } else {
+        statusSelect.classList.remove('is-invalid');
+        statusSelect.nextElementSibling.style.display = 'none';
+      }
+    });
+
+    // Initialize: Ensure no invalid state on load
+    const validStatuses = ['pending', 'completed', 'failed'];
+    if (validStatuses.includes(statusSelect.value)) {
+      statusSelect.classList.remove('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'none';
+    } else {
+      statusSelect.classList.add('is-invalid');
+      statusSelect.nextElementSibling.style.display = 'block';
+    }
+  })();
+</script>
+
+<style>
+  .form-select, #status {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 1 !important;
+  }
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  .is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  }
+  .invalid-feedback {
+    display: none;
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+  }
+
+  .form-actions-sticky {
+  position: sticky;
+  bottom: 20px;
+  background: #f8f9fa; /* Light background to match bg-light form */
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000; /* Ensure buttons stay above other content */
+  border-radius: 0.25rem;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for visibility */
+}
+
+/* Ensure the form has enough padding at the bottom to avoid overlap */
+form {
+  padding-bottom: 80px; /* Adjust based on button height */
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .form-actions-sticky {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .form-actions-sticky button {
+    width: 100%; /* Full-width buttons on small screens */
+  }
+}
+</style>
+
+<%- include('partials/footer') %>
