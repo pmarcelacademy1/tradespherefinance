@@ -47,7 +47,7 @@ app.set('view engine', 'ejs');
 
 
 // DB config
-const db = 'mongodb+srv://pius1:pius123@webdevelopment.xav1dsx.mongodb.net/tradespheresfinance';
+const db = 'mongodb+srv://pius1:pius123@webdevelopment.xav1dsx.mongodb.net/traidespheresfinance';
 mongoose.connect(db)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
